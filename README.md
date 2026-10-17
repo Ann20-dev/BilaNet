@@ -22,7 +22,7 @@ The assistant previously returned placeholder/mock responses instead of real AI 
 
 ```bash
 cd africa-code-assistant/backend
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 ## Run frontend
