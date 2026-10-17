@@ -12,16 +12,24 @@ export default function App() {
   useEffect(() => { fetch("http://127.0.0.1:8000/api/v1/health").then(r=>r.json()).then(d=>setHealth(d.status)).catch(()=>setHealth("offline")); }, []);
   async function send() {
     setLoading(true);
-    const r = await fetch("http://127.0.0.1:8000/api/v1/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message: msg}) });
-    const d = await r.json();
-    setResp(d.response);
+    try {
+      const r = await fetch("http://127.0.0.1:8000/api/v1/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message: msg}) });
+      const d = await r.json();
+      setResp(r.ok ? d.response : (d.detail || "Request failed"));
+    } catch (e) {
+      setResp("Backend unavailable");
+    }
     setLoading(false);
   }
   async function gen() {
     setLoading(true);
-    const r = await fetch("http://127.0.0.1:8000/api/v1/code/generate", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({description: msg, language: lang}) });
-    const d = await r.json();
-    setCode(d.code);
+    try {
+      const r = await fetch("http://127.0.0.1:8000/api/v1/code/generate", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({description: msg, language: lang}) });
+      const d = await r.json();
+      setCode(r.ok ? d.code : (d.detail || "Request failed"));
+    } catch (e) {
+      setCode("Backend unavailable");
+    }
     setLoading(false);
   }
   return (
