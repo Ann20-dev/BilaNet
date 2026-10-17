@@ -3,7 +3,7 @@ class LlamaProvider:
     def __init__(self, path, context_size=4096, threads=4, max_tokens=1024):
         self.path = path; self.context_size = context_size; self.threads = threads; self.max_tokens = max_tokens; self.llm = None
     def _prompt(self, prompt):
-        return "<|fim_prefix|>user\n" + str(prompt) + "<|fim_suffix|>\n<|fim_prefix|>assistant\n"
+        return "<|im_start|>user\n" + str(prompt) + "<|im_end|>\n<|im_start|>assistant\n"
     def load(self):
         if not self.path or not os.path.exists(self.path):
             raise FileNotFoundError("model not found")
