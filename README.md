@@ -18,6 +18,32 @@ The assistant previously returned placeholder/mock responses instead of real AI 
 - `bilanet/backend` — FastAPI API with local GGUF inference
 - `bilanet/frontend` — React + Vite UI
 
+## Setup
+
+Requires Python 3.10+ and Node.js 18+.
+
+1. Download the model (~2GB) into `bilanet/models/`:
+
+   ```bash
+   curl -L -o bilanet/models/qwen2.5-coder-3b-instruct-q4_0.gguf \
+     https://huggingface.co/Qwen/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/qwen2.5-coder-3b-instruct-q4_0.gguf
+   ```
+
+2. Create the config file:
+
+   ```bash
+   cp bilanet/.env.example bilanet/.env
+   ```
+
+3. Install backend dependencies:
+
+   ```bash
+   cd bilanet/backend
+   python3 -m venv .venv
+   .venv/bin/pip install -r requirements.txt
+   .venv/bin/pip install llama-cpp-python  # local model inference; may take a few minutes to build
+   ```
+
 ## Run backend
 
 ```bash
@@ -34,4 +60,3 @@ npm run dev
 ```
 
 Open http://localhost:5173/
-EOF
