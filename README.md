@@ -1,6 +1,6 @@
 # BilaNet
 
-Africa Code Assistant: a fully offline desktop application that brings AI-powered coding assistance to developers, students, and professionals across Africa. Runs on low-cost laptops (8GB RAM, no GPU required).
+BilaNet: a fully offline desktop application that brings AI-powered coding assistance to developers, students, and professionals across Africa. Runs on low-cost laptops (8GB RAM, no GPU required).
 
 ## Problem
 
@@ -15,20 +15,20 @@ The assistant previously returned placeholder/mock responses instead of real AI 
 
 ## Structure
 
-- `africa-code-assistant/backend` — FastAPI API with local GGUF inference
-- `africa-code-assistant/frontend` — React + Vite UI
+- `bilanet/backend` — FastAPI API with local GGUF inference
+- `bilanet/frontend` — React + Vite UI
 
 ## Run backend
 
 ```bash
-cd africa-code-assistant/backend
+cd bilanet/backend
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 ## Run frontend
 
 ```bash
-cd africa-code-assistant/frontend
+cd bilanet/frontend
 npm install
 npm run dev
 ```

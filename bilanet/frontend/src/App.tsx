@@ -35,7 +35,7 @@ export default function App() {
   return (
     <div style={{display:"flex",height:"100vh",fontFamily:"sans-serif"}}>
       <aside style={{width:220,padding:12,borderRight:"1px solid #ccc"}}>
-        <h3>Africa Code Assistant</h3>
+        <h3>BilaNet</h3>
         <p>Status: <b>{health}</b></p>
         <label>Language</label>
         <select value={lang} onChange={e=>setLang(e.target.value)} style={{width:"100%"}}>
