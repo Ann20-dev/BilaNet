@@ -5,6 +5,27 @@ const API_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 const LANGS = ["python","javascript","typescript","java","c","cpp","php","html","css","sql","bash"];
 
+// Turn a failed request into a message that says what actually went wrong.
+async function callApi(path: string, body: unknown): Promise<{ ok: true; data: any } | { ok: false; error: string }> {
+  let r: Response;
+  try {
+    r = await fetch(API_URL + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  } catch (e) {
+    // fetch only throws when no response arrived: offline, DNS, CORS block, or blocked by an extension.
+    const reason = e instanceof Error ? e.message : String(e);
+    return { ok: false, error: `Could not reach the backend at ${API_URL || "this site"} (${reason}). It may be waking up, blocked by CORS, or blocked by a browser extension. Check the browser console (F12) for details.` };
+  }
+  const text = await r.text();
+  let data: any = null;
+  try { data = text ? JSON.parse(text) : null; } catch { /* not JSON */ }
+  if (!r.ok) {
+    const detail = data?.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail)) : text.slice(0, 200) || r.statusText;
+    return { ok: false, error: `Backend error ${r.status}: ${detail}` };
+  }
+  if (data === null) return { ok: false, error: `Backend returned an unexpected response (status ${r.status}): ${text.slice(0, 200)}` };
+  return { ok: true, data };
+}
+
 export default function App() {
   const [msg, setMsg] = useState("");
   const [code, setCode] = useState("");
@@ -15,24 +36,14 @@ export default function App() {
   useEffect(() => { fetch(API_URL + "/api/v1/health").then(r=>r.json()).then(d=>setHealth(d.status)).catch(()=>setHealth("offline")); }, []);
   async function send() {
     setLoading(true);
-    try {
-      const r = await fetch(API_URL + "/api/v1/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message: msg}) });
-      const d = await r.json();
-      setResp(r.ok ? d.response : (d.detail || "Request failed"));
-    } catch (e) {
-      setResp("Backend unavailable");
-    }
+    const res = await callApi("/api/v1/chat", { message: msg });
+    setResp(res.ok ? res.data.response : res.error);
     setLoading(false);
   }
   async function gen() {
     setLoading(true);
-    try {
-      const r = await fetch(API_URL + "/api/v1/code/generate", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({description: msg, language: lang}) });
-      const d = await r.json();
-      setCode(r.ok ? d.code : (d.detail || "Request failed"));
-    } catch (e) {
-      setCode("Backend unavailable");
-    }
+    const res = await callApi("/api/v1/code/generate", { description: msg, language: lang });
+    setCode(res.ok ? res.data.code : res.error);
     setLoading(false);
   }
   return (
