@@ -16,9 +16,10 @@ def status():
             loaded = False
     return {
         "provider": provider,
-        "mock": provider != "local",
-        "model_path": settings.model_path,
-        "configured": real_configured,
+        "mock": provider not in ("local", "api"),
+        "model_path": settings.model_path if provider == "local" else None,
+        "model": settings.api_model if provider == "api" else None,
+        "configured": real_configured or (provider == "api" and bool(settings.api_key)),
         "loaded": loaded,
-        "ready": real_configured,
+        "ready": real_configured or (provider == "api" and bool(settings.api_key)),
     }

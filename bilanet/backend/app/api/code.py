@@ -5,7 +5,7 @@ router = APIRouter()
 p = get_provider()
 @router.post("/code/generate")
 def gen(req: CodeRequest):
-    return {"code": p.generate(req.description or "")}
+    return {"code": p.generate(f"Write {req.language} code for: {req.description or ''}" if req.language else (req.description or ""))}
 @router.post("/code/explain")
 def exp(req: CodeRequest):
     return {"explanation": p.generate("explain: " + req.code)}
