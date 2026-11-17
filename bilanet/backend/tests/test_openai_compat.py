@@ -20,7 +20,7 @@ def make(monkeypatch, status, body, capture=None):
             capture.update(url=url, **kw)
         return FakeResp(status, body)
     monkeypatch.setattr(httpx, "post", fake_post)
-    return OpenAICompatProvider("https://api.example.com/v1/", "key123", "qwen/qwen3-32b")
+    return OpenAICompatProvider("https://api.example.com/v1/", "key123", "qwen/qwen3.8-27b")
 
 
 def test_generate_strips_think_and_sends_request(monkeypatch):
@@ -29,7 +29,7 @@ def test_generate_strips_think_and_sends_request(monkeypatch):
     assert p.generate("say hi") == "print('hi')"
     assert seen["url"] == "https://api.example.com/v1/chat/completions"
     assert seen["headers"]["Authorization"] == "Bearer key123"
-    assert seen["json"]["model"] == "qwen/qwen3-32b"
+    assert seen["json"]["model"] == "qwen/qwen3.8-27b"
     assert seen["json"]["messages"][-1] == {"role": "user", "content": "say hi"}
 
 

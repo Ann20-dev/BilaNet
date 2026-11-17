@@ -20,7 +20,7 @@ services:
       - key: AI_API_BASE_URL
         value: https://api.groq.com/openai/v1
       - key: AI_MODEL
-        value: qwen/qwen3-32b
+        value: qwen/qwen3.8-27b
       # Secret: your Groq API key from https://console.groq.com/keys
       - key: AI_API_KEY
         sync: false
