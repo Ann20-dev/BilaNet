@@ -21,4 +21,4 @@ services:
         sync: false
       # Optional: allow Vercel preview deployments too
       - key: CORS_ORIGIN_REGEX
-        value: https://bilanet.*\.vercel\.app
+        value: https://bila-?net.*\.vercel\.app
