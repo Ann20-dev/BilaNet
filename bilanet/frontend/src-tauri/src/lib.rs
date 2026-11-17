@@ -4,7 +4,7 @@
 //! resource) on a free local port, then opens the window and tells the page where the
 //! backend is. User data (chat database, downloaded model, logs) lives in the per-user
 //! app data folder. When the app exits the backend is stopped; if the app crashes, the
-//! backend notices its stdin closing and exits by itself.
+//! backend notices this process is gone and exits by itself.
 
 use std::{
     fs,
@@ -53,8 +53,9 @@ fn spawn_backend(app: &AppHandle, port: u16) -> Result<Child, String> {
         .env("DB_URL", db_url)
         .env("PORT", port.to_string())
         .env("THREADS", threads.to_string())
-        .env("BILANET_WATCH_STDIN", "1")
-        .stdin(Stdio::piped())
+        // The backend exits by itself when this process goes away (quit or crash).
+        .env("BILANET_PARENT_PID", std::process::id().to_string())
+        .stdin(Stdio::null())
         .stdout(log)
         .stderr(log_err);
     #[cfg(windows)]

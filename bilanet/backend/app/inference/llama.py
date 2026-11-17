@@ -12,7 +12,7 @@ class LlamaProvider:
             from llama_cpp import Llama
         except ImportError:
             raise RuntimeError("llama-cpp-python not installed")
-        self.llm = Llama(model_path=self.path, n_ctx=self.context_size, n_threads=self.threads, verbose=False)
+        self.llm = Llama(model_path=self.path, n_ctx=self.context_size, n_threads=self.threads, verbose=os.getenv("LLAMA_VERBOSE") == "1")
     def generate(self, prompt, max_tokens=None):
         if self.llm is None: self.load()
         out = self.llm(self._prompt(prompt), max_tokens=max_tokens or self.max_tokens, stop=['<|im_end|>'])

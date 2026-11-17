@@ -72,3 +72,22 @@ To use a different service, change `AI_API_BASE_URL`, `AI_MODEL` and `AI_API_KEY
 3. **Connect them:** in Render → bilanet-api → Environment, set `CORS_ORIGINS` to your Vercel URL (e.g. `https://bilanet.vercel.app`) and save. Render redeploys on its own.
 
 Note: free Render services sleep after 15 minutes of inactivity, so the first request can take about a minute. The SQLite database resets on each redeploy.
+
+## Desktop app (for testers)
+
+BilaNet ships as a desktop app that testers install with a double-click. It works fully offline after a one-time model download.
+
+**Install**
+
+1. Open the [Releases page](https://github.com/Ann20-dev/BilaNet/releases) and download the file for your computer:
+   - **Windows:** `BilaNet_…_x64-setup.exe`. If Windows SmartScreen warns you, click **More info → Run anyway** (the test build isn't code-signed yet).
+   - **macOS (Apple Silicon, M1 or newer):** `BilaNet_…_aarch64.dmg`. Drag BilaNet to Applications. Because the test build isn't notarized, macOS may say it is "damaged". Run `xattr -cr /Applications/BilaNet.app` in Terminal once, then open it.
+   - **Linux:** `BilaNet_…_amd64.AppImage`. Make it executable (`chmod +x BilaNet_*.AppImage`) and run it, or install the `.deb` on Ubuntu/Debian.
+2. On first launch, click **Download AI model** (about 2 GB, one time). If the connection drops, click **Resume download** and it continues where it stopped.
+3. After that, BilaNet works with no internet connection.
+
+**Requirements:** 8 GB RAM, a 64-bit CPU from roughly 2015 or newer (needs AVX2), about 3 GB of free disk space.
+
+**Where data is stored:** the model, chat history and `backend.log` live in the per-user app data folder (`%APPDATA%\com.bilanet.app` on Windows, `~/Library/Application Support/com.bilanet.app` on macOS, `~/.local/share/com.bilanet.app` on Linux).
+
+**Building a new release:** on GitHub go to **Actions → Desktop app → Run workflow** (or push a tag like `v0.1.1`). The installers are attached to a draft release; publish it to share with testers. Bump `version` in `bilanet/frontend/src-tauri/tauri.conf.json` for each new release.

@@ -3,7 +3,7 @@
 usage: python smoke_test_bundle.py <dist/bilanet-backend dir> [tiny-model.gguf]
 
 Checks that the bundled server starts, answers /health, can run the llama.cpp model
-(if a model file is given, e.g. a tiny test GGUF) and exits when its stdin closes.
+(if a model file is given, e.g. a tiny test GGUF) and exits when its parent app exits.
 """
 import json
 import os
@@ -14,12 +14,15 @@ import time
 import urllib.error
 import urllib.request
 
-bundle = sys.argv[1]
+bundle = os.path.abspath(sys.argv[1])
 model = sys.argv[2] if len(sys.argv) > 2 and os.path.getsize(sys.argv[2]) > 0 else None
 exe = os.path.join(bundle, "bilanet-backend.exe" if os.name == "nt" else "bilanet-backend")
 port = "8799"
 base = f"http://127.0.0.1:{port}/api/v1"
 data = tempfile.mkdtemp()
+
+# Stand-in for the desktop app: the backend should exit when this process exits.
+fake_app = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(3600)"])
 env = dict(
     os.environ,
     AI_PROVIDER="local",
@@ -27,13 +30,15 @@ env = dict(
     DB_URL="sqlite:///" + os.path.join(data, "bilanet.db").replace("\\", "/"),
     PORT=port,
     THREADS="2",
+    CONTEXT_SIZE="512",
     MAX_TOKENS="16",
-    BILANET_WATCH_STDIN="1",
+    LLAMA_VERBOSE="1",
+    BILANET_PARENT_PID=str(fake_app.pid),
 )
-proc = subprocess.Popen([exe], stdin=subprocess.PIPE, env=env, cwd=data)
+proc = subprocess.Popen([exe], env=env, cwd=data)
 
 
-def call(path, body=None, timeout=120):
+def call(path, body=None, timeout=300):
     req = urllib.request.Request(base + path, data=json.dumps(body).encode() if body is not None else None,
                                  headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -43,7 +48,7 @@ def call(path, body=None, timeout=120):
 try:
     for _ in range(120):
         try:
-            assert call("/health")["status"] == "ok"
+            assert call("/health", timeout=5)["status"] == "ok"
             break
         except (urllib.error.URLError, ConnectionError, OSError):
             if proc.poll() is not None:
@@ -51,18 +56,20 @@ try:
             time.sleep(1)
     else:
         sys.exit("backend did not answer /health within 120 s")
-    print("health ok")
+    print("health ok", flush=True)
     if model:
+        t = time.time()
         out = call("/chat", {"message": "Once upon a time"})
         assert isinstance(out.get("response"), str), out
-        print("llama.cpp inference ok:", repr(out["response"][:80]))
+        print(f"llama.cpp inference ok in {time.time() - t:.1f}s:", repr(out["response"][:80]), flush=True)
     else:
         print("WARNING: no test model given, skipped the inference check")
 finally:
-    proc.stdin.close()  # like the desktop app quitting
+    fake_app.kill()  # like the desktop app quitting or crashing
+    fake_app.wait()
     try:
         proc.wait(timeout=15)
-        print("backend exited when stdin closed")
+        print("backend exited after its parent app exited")
     except subprocess.TimeoutExpired:
         proc.kill()
-        sys.exit("backend did not exit after stdin closed")
+        sys.exit("backend did not exit after its parent app exited")
