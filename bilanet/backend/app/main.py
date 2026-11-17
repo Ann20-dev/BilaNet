@@ -5,7 +5,8 @@ from app.core.config import settings
 
 app = FastAPI(title="BilaNet", version="0.1.0")
 import os
-_default_origins = ["http://localhost:1420", "http://localhost:5173", "tauri://localhost"]
+# tauri://localhost is the desktop app on macOS/Linux; http(s)://tauri.localhost on Windows.
+_default_origins = ["http://localhost:1420", "http://localhost:5173", "tauri://localhost", "http://tauri.localhost", "https://tauri.localhost"]
 _extra_origins = [o.strip().rstrip("/") for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,

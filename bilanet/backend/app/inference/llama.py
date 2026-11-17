@@ -6,7 +6,8 @@ class LlamaProvider:
         return "<|im_start|>user\n" + str(prompt) + "<|im_end|>\n<|im_start|>assistant\n"
     def load(self):
         if not self.path or not os.path.exists(self.path):
-            raise FileNotFoundError("model not found")
+            from fastapi import HTTPException
+            raise HTTPException(503, "The AI model is not downloaded yet. Use the Download button to get it (one time, about 2 GB).")
         try:
             from llama_cpp import Llama
         except ImportError:

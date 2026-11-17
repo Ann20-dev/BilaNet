@@ -1,0 +1,95 @@
+# Builds the BilaNet desktop installers (Windows .exe/.msi, macOS .dmg, Linux .AppImage/.deb)
+# and attaches them to a draft GitHub release.
+#
+# Run it from GitHub: Actions → "Desktop app" → Run workflow, or push a tag like v0.1.0.
+name: Desktop app
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-22.04 # older glibc so the AppImage runs on more Linux versions
+          - platform: windows-latest
+          - platform: macos-latest # Apple Silicon (M1 and newer)
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---- Backend: Python + llama.cpp packed into a standalone program ----
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build backend bundle
+        working-directory: bilanet/backend
+        shell: bash
+        env:
+          # Build llama.cpp for generic CPUs, not just the CI machine's CPU,
+          # so the app runs on testers' laptops.
+          CMAKE_ARGS: -DGGML_NATIVE=OFF
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+          pip install --no-binary llama-cpp-python "llama-cpp-python==0.3.36"
+          pyinstaller --noconfirm --clean --onedir --name bilanet-backend \
+            --paths . --collect-all llama_cpp --collect-submodules uvicorn --collect-submodules app \
+            desktop_entry.py
+
+      - name: Smoke-test backend bundle
+        shell: bash
+        run: |
+          curl -fsSL -o stories260K.gguf https://huggingface.co/ggml-org/models/resolve/main/tinyllamas/stories260K.gguf || : > stories260K.gguf
+          python bilanet/backend/scripts/smoke_test_bundle.py bilanet/backend/dist/bilanet-backend stories260K.gguf
+
+      # ---- Desktop shell: Tauri + React frontend ----
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: bilanet/frontend/package-lock.json
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: bilanet/frontend/src-tauri -> target
+
+      - name: Install frontend dependencies
+        working-directory: bilanet/frontend
+        run: npm ci
+
+      - name: Build installers and upload to draft release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: bilanet/frontend
+          tagName: v__VERSION__
+          releaseName: BilaNet v__VERSION__ (test build)
+          releaseBody: |
+            Test build of the BilaNet desktop app. Pick the file for your computer:
+            - **Windows**: `BilaNet_..._x64-setup.exe`
+            - **macOS (Apple Silicon)**: `BilaNet_..._aarch64.dmg`
+            - **Linux**: `BilaNet_..._amd64.AppImage` (or `.deb` for Ubuntu/Debian)
+
+            On first launch, BilaNet downloads its AI model once (about 2 GB). After that it works fully offline.
+          releaseDraft: true
+          prerelease: true

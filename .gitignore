@@ -15,3 +15,8 @@ dist/
 
 # Env
 .env
+
+# Desktop build outputs
+bilanet/backend/build/
+bilanet/backend/dist/
+*.spec
