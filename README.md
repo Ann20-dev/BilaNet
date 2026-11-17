@@ -60,3 +60,13 @@ npm run dev
 ```
 
 Open http://localhost:5173/
+
+## Deploy (Render + Vercel)
+
+The hosted version uses Render for the backend and Vercel for the frontend. Render's free plan (512 MB RAM) can't load the 2 GB model, so the hosted backend runs with `AI_PROVIDER=mock`. For real answers, use a 4 GB+ plan and set `AI_PROVIDER=local` (the build also needs to install `llama-cpp-python` and download the model).
+
+1. **Backend → Render:** Dashboard → **New → Blueprint** → pick this repo. Render reads `render.yaml`. Copy the service URL, e.g. `https://bilanet-api.onrender.com`.
+2. **Frontend → Vercel:** **Add New → Project** → import this repo → set **Root Directory** to `bilanet/frontend` → add env var `VITE_API_URL` = your Render URL → Deploy.
+3. **Connect them:** in Render → bilanet-api → Environment, set `CORS_ORIGINS` to your Vercel URL (e.g. `https://bilanet.vercel.app`) and save. Render redeploys on its own.
+
+Note: free Render services sleep after 15 minutes of inactivity, so the first request can take about a minute. The SQLite database resets on each redeploy.

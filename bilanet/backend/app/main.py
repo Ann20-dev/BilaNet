@@ -4,7 +4,18 @@ from app.api import health, chat, code, conversations, documents, model
 from app.core.config import settings
 
 app = FastAPI(title="BilaNet", version="0.1.0")
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:1420","http://localhost:5173","tauri://localhost"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+import os
+_default_origins = ["http://localhost:1420", "http://localhost:5173", "tauri://localhost"]
+_extra_origins = [o.strip().rstrip("/") for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_default_origins + _extra_origins,
+    # Optional regex, e.g. to allow Vercel preview deployments: https://bilanet.*\.vercel\.app
+    allow_origin_regex=os.getenv("CORS_ORIGIN_REGEX") or None,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(health.router, prefix="/api/v1")
 app.include_router(model.router, prefix="/api/v1")

@@ -1,0 +1,24 @@
+# Render Blueprint for the BilaNet backend (FastAPI).
+# Deploy: Render dashboard → New → Blueprint → select this repo.
+services:
+  - type: web
+    name: bilanet-api
+    runtime: python
+    plan: free
+    rootDir: bilanet/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      # The free plan (512 MB RAM) cannot load the 2 GB local model, so the
+      # hosted demo uses the mock provider. Set to "local" on a 4 GB+ plan.
+      - key: AI_PROVIDER
+        value: mock
+      # Your Vercel URL(s), comma-separated, e.g. https://bilanet.vercel.app
+      - key: CORS_ORIGINS
+        sync: false
+      # Optional: allow Vercel preview deployments too
+      - key: CORS_ORIGIN_REGEX
+        value: https://bilanet.*\.vercel\.app
