@@ -43,8 +43,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
           pip install --no-binary llama-cpp-python "llama-cpp-python==0.3.36"
+          # Offline Python / NumPy / pandas docs for the Docs tab. numpy and pandas are only
+          # needed here, at build time, to read their documentation; the app doesn't import them.
+          pip install numpy pandas
+          python scripts/build_docs_db.py
           pyinstaller --noconfirm --clean --onedir --name bilanet-backend \
             --paths . --collect-all llama_cpp --collect-submodules uvicorn --collect-submodules app \
+            --add-data "app/rag/docs.db:app/rag" --add-data "app/quiz/questions.json:app/quiz" \
+            --exclude-module pandas \
             desktop_entry.py
 
       - name: Smoke-test backend bundle
@@ -90,6 +96,6 @@ jobs:
             - **macOS (Apple Silicon)**: `BilaNet_..._aarch64.dmg`
             - **Linux**: `BilaNet_..._amd64.AppImage` (or `.deb` for Ubuntu/Debian)
 
-            On first launch, BilaNet downloads its AI model once (about 2 GB). After that it works fully offline.
+            On first launch, BilaNet downloads its AI model once: Light (1.1 GB, for 4–6 GB RAM laptops) or Standard (2.1 GB, for 8 GB and up). It recommends the one that fits your laptop. After that it works fully offline.
           releaseDraft: true
           prerelease: true

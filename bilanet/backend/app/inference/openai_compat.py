@@ -8,7 +8,7 @@ from fastapi import HTTPException
 
 SYSTEM_PROMPT = (
     "You are BilaNet, a concise, friendly coding assistant for developers and students. "
-    "Give clear explanations and correct, runnable code. /no_think"
+    "Give clear explanations and correct, runnable code."
 )
 # Qwen3 models may emit their reasoning in <think> tags; testers only need the answer.
 _THINK = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
@@ -22,7 +22,7 @@ class OpenAICompatProvider:
         self.max_tokens = max_tokens
         self.timeout = timeout
 
-    def generate(self, prompt, max_tokens=None):
+    def generate(self, prompt, max_tokens=None, system=None):
         if not self.api_key:
             raise HTTPException(503, "Hosted AI is not configured: set AI_API_KEY on the server.")
         try:
@@ -32,7 +32,7 @@ class OpenAICompatProvider:
                 json={
                     "model": self.model,
                     "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "system", "content": (system or SYSTEM_PROMPT) + " /no_think"},
                         {"role": "user", "content": str(prompt)},
                     ],
                     "max_tokens": max_tokens or self.max_tokens,
@@ -49,5 +49,5 @@ class OpenAICompatProvider:
         text = r.json()["choices"][0]["message"]["content"] or ""
         return _THINK.sub("", text).strip()
 
-    def stream(self, prompt, max_tokens=None):
-        yield self.generate(prompt, max_tokens)
+    def stream(self, prompt, max_tokens=None, system=None):
+        yield self.generate(prompt, max_tokens, system)

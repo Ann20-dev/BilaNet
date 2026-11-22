@@ -57,6 +57,13 @@ try:
     else:
         sys.exit("backend did not answer /health within 120 s")
     print("health ok", flush=True)
+    # Data files must be inside the bundle (PyInstaller --add-data).
+    docs = call("/documents/search", {"query": "read csv with pandas"})["results"]
+    assert any(d["title"] == "pandas.read_csv" for d in docs), docs
+    print(f"offline docs ok: {call('/documents/info')['counts']}", flush=True)
+    with urllib.request.urlopen(base + "/quiz/questions?count=3", timeout=10) as r:
+        assert len(json.loads(r.read())) == 3
+    print("quiz ok", flush=True)
     if model:
         t = time.time()
         out = call("/chat", {"message": "Once upon a time"})

@@ -15,8 +15,6 @@ use std::{
 };
 use tauri::{AppHandle, Manager, RunEvent, WebviewUrl, WebviewWindowBuilder};
 
-const MODEL_FILE: &str = "qwen2.5-coder-3b-instruct-q4_0.gguf";
-
 struct Backend(Mutex<Option<Child>>);
 
 fn free_port() -> u16 {
@@ -49,7 +47,8 @@ fn spawn_backend(app: &AppHandle, port: u16) -> Result<Child, String> {
     let mut cmd = Command::new(&exe);
     cmd.current_dir(&data)
         .env("AI_PROVIDER", "local")
-        .env("MODEL_PATH", models.join(MODEL_FILE))
+        // The backend picks the model file in this folder (small or standard, chosen at first run).
+        .env("MODELS_DIR", &models)
         .env("DB_URL", db_url)
         .env("PORT", port.to_string())
         .env("THREADS", threads.to_string())

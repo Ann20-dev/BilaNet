@@ -1,12 +1,25 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.schemas.models import DocIndexRequest, DocSearchRequest
-from app.rag.indexer import DocIndex
+from app.rag.store import get_store
+
 router = APIRouter()
-idx = DocIndex()
-@router.post("/documents/index")
-def index(req: DocIndexRequest):
-    idx.build(req.directory)
-    return {"ok": True, "docs": len(idx.docs)}
+
+
+@router.get("/documents/info")
+def info():
+    return get_store().info()
+
+
 @router.post("/documents/search")
 def search(req: DocSearchRequest):
-    return {"results": idx.search(req.query, req.top_k)}
+    return {"results": get_store().search(req.query, req.top_k, req.library)}
+
+
+@router.post("/documents/index")
+def index(req: DocIndexRequest):
+    """Add a folder of your own notes or code (.md, .txt, .py, .rst) to the offline search."""
+    try:
+        n = get_store().index_folder(req.directory)
+    except FileNotFoundError:
+        raise HTTPException(404, f"Folder not found: {req.directory}")
+    return {"ok": True, "docs": n}

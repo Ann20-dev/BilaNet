@@ -1,6 +1,6 @@
 """Entry point for the backend bundled inside the BilaNet desktop app (built with PyInstaller).
 
-The desktop app starts this process with AI_PROVIDER, MODEL_PATH, DB_URL and PORT set,
+The desktop app starts this process with AI_PROVIDER, MODELS_DIR, DB_URL and PORT set,
 plus BILANET_PARENT_PID (its own process id). When that process goes away (the app quits
 or crashes), this server exits too, so no orphaned background process is left running.
 """
