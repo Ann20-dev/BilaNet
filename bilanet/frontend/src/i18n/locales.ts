@@ -11,12 +11,16 @@ export type Locale = {
   strings: Partial<Strings>;
 };
 
+// Answer languages the offline model writes reliably. Tested Nov 2026 with Qwen2.5-Coder 3B:
+// French was correct; Swahili and Hausa came out as fluent-looking nonsense. Every other
+// language is marked "experimental" in the AI-language menu until a better model is in place.
+export const STABLE_REPLY_LANGUAGES = ["en", "fr", "pt", "ar"];
+
 export const LOCALES: Locale[] = [
   { code: "en", name: "English", english: "English", reviewed: true, strings: {} },
 
   { code: "sw", name: "Kiswahili", english: "Swahili", reviewed: false, strings: {
     tagline: "Msaidizi wa programu bila mtandao", uiLanguage: "Lugha", replyLanguage: "AI ijibu kwa",
-    replyHint: "AI ya nje ya mtandao huandika vizuri zaidi kwa Kiingereza, Kifaransa, Kiarabu, Kireno na Kiswahili. Kwa lugha nyingine majibu yanaweza kuwa dhaifu; msimbo ni uleule.",
     draftNote: "Tafsiri hii ni rasimu. Tusaidie kuiboresha.",
     statusReady: "Tayari", statusStarting: "Inaanza…", statusWaking: "Inaamsha seva…", statusOffline: "Haiwezi kumfikia msaidizi", statusFailed: "Imeshindwa kuanza",
     tabChat: "Mazungumzo", tabGenerate: "Tengeneza", tabExplain: "Eleza", tabDebug: "Rekebisha", tabOptimize: "Boresha", tabTranslate: "Tafsiri msimbo", tabDocs: "Nyaraka", tabQuiz: "Maswali", tabProject: "Mradi",
@@ -31,7 +35,6 @@ export const LOCALES: Locale[] = [
 
   { code: "ha", name: "Hausa", english: "Hausa", reviewed: false, strings: {
     tagline: "Mataimakin shirye-shirye ba tare da intanet ba", uiLanguage: "Harshe", replyLanguage: "AI ta amsa da",
-    replyHint: "AI ta cikin kwamfuta ta fi rubutu da kyau a Turanci, Faransanci, Larabci, Fotugal da Swahili. A wasu harsuna amsoshinta na iya yin rauni; lambar code ba ta canzawa.",
     draftNote: "Wannan fassarar daftari ce. Ka taimaka mana mu inganta ta.",
     statusReady: "A shirye", statusStarting: "Ana farawa…", statusWaking: "Ana tayar da sabar…", statusOffline: "Ba a iya kaiwa ga mataimaki ba", statusFailed: "An kasa farawa",
     tabChat: "Hira", tabGenerate: "Ƙirƙira", tabExplain: "Bayyana", tabDebug: "Gyara kurakurai", tabOptimize: "Inganta", tabTranslate: "Fassara code", tabDocs: "Takardu", tabQuiz: "Tambayoyi", tabProject: "Aiki",
@@ -46,7 +49,6 @@ export const LOCALES: Locale[] = [
 
   { code: "yo", name: "Yorùbá", english: "Yoruba", reviewed: false, strings: {
     tagline: "Olùrànlọ́wọ́ kóòdù láìsí íntánẹ́ẹ̀tì", uiLanguage: "Èdè", replyLanguage: "AI yóò dáhùn ní",
-    replyHint: "AI tí kò nílò íntánẹ́ẹ̀tì ń kọ̀wé dáradára jùlọ ní Gẹ̀ẹ́sì, Faransé, Lárúbáwá, Potogí àti Swahili. Ní àwọn èdè mìíràn ìdáhùn rẹ̀ lè má dára tó; kóòdù kò yí padà.",
     draftNote: "Ìtúmọ̀ yìí jẹ́ àkọsílẹ̀ àkọ́kọ́. Ràn wá lọ́wọ́ láti mú un dára sí i.",
     statusReady: "Ó ti ṣetán", statusStarting: "Ó ń bẹ̀rẹ̀…", statusWaking: "Ó ń jí sáfà…", statusOffline: "Kò lè dé ọ̀dọ̀ olùrànlọ́wọ́", statusFailed: "Kò lè bẹ̀rẹ̀",
     tabChat: "Ìjíròrò", tabGenerate: "Ṣẹ̀dá", tabExplain: "Ṣàlàyé", tabDebug: "Wá àṣìṣe", tabOptimize: "Mú dára sí i", tabTranslate: "Túmọ̀ kóòdù", tabDocs: "Ìwé", tabQuiz: "Ìdánwò", tabProject: "Iṣẹ́ àkànṣe",
@@ -61,7 +63,6 @@ export const LOCALES: Locale[] = [
 
   { code: "ig", name: "Igbo", english: "Igbo", reviewed: false, strings: {
     tagline: "Onye inyeaka koodu na-enweghị ịntanetị", uiLanguage: "Asụsụ", replyLanguage: "AI ga-aza n'",
-    replyHint: "AI na-anọghị n'ịntanetị na-ede nke ọma n'asụsụ Bekee, French, Arabic, Portuguese na Swahili. N'asụsụ ndị ọzọ azịza ya nwere ike ọ gaghị adị mma; koodu anaghị agbanwe.",
     draftNote: "Ntụgharị a bụ ndebanye mbụ. Nyere anyị aka ime ka ọ ka mma.",
     statusReady: "Ọ dị njikere", statusStarting: "Ọ na-amalite…", statusWaking: "Ọ na-akpọte sava…", statusOffline: "Enweghị ike iru onye inyeaka", statusFailed: "Ọ malitebeghị",
     tabChat: "Mkparịta ụka", tabGenerate: "Mepụta", tabExplain: "Kọwaa", tabDebug: "Chọta njehie", tabOptimize: "Mee ka ọ ka mma", tabTranslate: "Tụgharịa koodu", tabDocs: "Akwụkwọ", tabQuiz: "Ajụjụ", tabProject: "Ọrụ",
@@ -76,7 +77,6 @@ export const LOCALES: Locale[] = [
 
   { code: "am", name: "አማርኛ", english: "Amharic", reviewed: false, strings: {
     tagline: "ያለ ኢንተርኔት የሚሰራ የኮድ ረዳት", uiLanguage: "ቋንቋ", replyLanguage: "AI የሚመልስበት ቋንቋ",
-    replyHint: "ከመስመር ውጭ ያለው AI በእንግሊዝኛ፣ በፈረንሳይኛ፣ በዐረብኛ፣ በፖርቱጋልኛ እና በስዋሂሊ በተሻለ ይጽፋል። በሌሎች ቋንቋዎች መልሶቹ ደካማ ሊሆኑ ይችላሉ፤ ኮዱ ግን አይቀየርም።",
     draftNote: "ይህ ትርጉም ረቂቅ ነው። እንድናሻሽለው ይርዱን።",
     statusReady: "ዝግጁ", statusStarting: "በመጀመር ላይ…", statusWaking: "አገልጋዩን በማስነሳት ላይ…", statusOffline: "ረዳቱን ማግኘት አልተቻለም", statusFailed: "መጀመር አልተቻለም",
     tabChat: "ውይይት", tabGenerate: "ፍጠር", tabExplain: "አብራራ", tabDebug: "ስህተት ፈልግ", tabOptimize: "አሻሽል", tabTranslate: "ኮድ ተርጉም", tabDocs: "ሰነዶች", tabQuiz: "ጥያቄዎች", tabProject: "ፕሮጀክት",
@@ -91,7 +91,6 @@ export const LOCALES: Locale[] = [
 
   { code: "om", name: "Afaan Oromoo", english: "Oromo", reviewed: false, strings: {
     tagline: "Gargaaraa koodii interneetii malee", uiLanguage: "Afaan", replyLanguage: "AI'n kanaan deebisa",
-    replyHint: "AI'n interneetii malee hojjetu Ingliffaa, Faransaayii, Arabiffaa, Poorchugaalii fi Swahiliin caalaatti barreessa. Afaanota biroon deebiin isaa dadhabaa ta'uu danda'a; koodiin hin jijjiiramu.",
     draftNote: "Hiikni kun qophii jalqabaati. Akka fooyyessinu nu gargaaraa.",
     statusReady: "Qophaa'eera", statusStarting: "Jalqabaa jira…", statusWaking: "Sarvarii dammaqsaa jira…", statusOffline: "Gargaaraa bira ga'uun hin danda'amne", statusFailed: "Jalqabuu hin dandeenye",
     tabChat: "Haasaa", tabGenerate: "Uumi", tabExplain: "Ibsi", tabDebug: "Dogoggora barbaadi", tabOptimize: "Fooyyessi", tabTranslate: "Koodii hiiki", tabDocs: "Galmeewwan", tabQuiz: "Gaaffii", tabProject: "Pirojektii",
@@ -106,7 +105,6 @@ export const LOCALES: Locale[] = [
 
   { code: "so", name: "Soomaali", english: "Somali", reviewed: false, strings: {
     tagline: "Caawiye koodh oo aan internet u baahnayn", uiLanguage: "Luqadda", replyLanguage: "AI-gu ha ku jawaabo",
-    replyHint: "AI-ga offline-ka ah wuxuu si fiican u qoraa Ingiriis, Faransiis, Carabi, Boortaqiis iyo Sawaaxili. Luqadaha kale jawaabtiisu way daciifi kartaa; koodhku isma beddelo.",
     draftNote: "Turjumaaddan waa qabyo. Naga caawi inaan horumarino.",
     statusReady: "Diyaar", statusStarting: "Wuu bilaabanayaa…", statusWaking: "Server-ka ayaa la toosinayaa…", statusOffline: "Lama gaari karo caawiyaha", statusFailed: "Wuu bilaaban waayay",
     tabChat: "Wada-hadal", tabGenerate: "Samee", tabExplain: "Sharax", tabDebug: "Hel khaladaadka", tabOptimize: "Hagaaji", tabTranslate: "Turjun koodh", tabDocs: "Dukumentiyo", tabQuiz: "Imtixaan", tabProject: "Mashruuc",
@@ -121,7 +119,6 @@ export const LOCALES: Locale[] = [
 
   { code: "ti", name: "ትግርኛ", english: "Tigrinya", reviewed: false, strings: {
     tagline: "ብዘይ ኢንተርነት ዝሰርሕ ሓጋዚ ኮድ", uiLanguage: "ቋንቋ", replyLanguage: "AI ብዚ ይመልስ",
-    replyHint: "እቲ ብዘይ ኢንተርነት ዝሰርሕ AI ብእንግሊዝኛ፡ ፈረንሳይኛ፡ ዓረብኛ፡ ፖርቱጊዝኛን ስዋሂልን ዝሓሸ ይጽሕፍ። ብኻልኦት ቋንቋታት መልሱ ደኺሙ ክኸውን ይኽእል፤ ኮድ ግን ኣይቅየርን።",
     draftNote: "እዚ ትርጉም ረቂቕ እዩ። ንምምሕያሹ ሓግዙና።",
     statusReady: "ድሉው", statusStarting: "ይጅምር ኣሎ…", statusWaking: "ሰርቨር የተስእ ኣሎ…", statusOffline: "ናብ ሓጋዚ ምብጻሕ ኣይተኻእለን", statusFailed: "ክጅምር ኣይከኣለን",
     tabChat: "ዕላል", tabGenerate: "ፍጠር", tabExplain: "ኣብርህ", tabDebug: "ጌጋ ድለ", tabOptimize: "ኣመሓይሽ", tabTranslate: "ኮድ ተርጉም", tabDocs: "ሰነዳት", tabQuiz: "ሕቶታት", tabProject: "ፕሮጀክት",
@@ -136,7 +133,6 @@ export const LOCALES: Locale[] = [
 
   { code: "zu", name: "isiZulu", english: "Zulu", reviewed: false, strings: {
     tagline: "Umsizi wekhodi ongadingi i-inthanethi", uiLanguage: "Ulimi", replyLanguage: "I-AI iphendula nge",
-    replyHint: "I-AI engaxhunyiwe ibhala kangcono ngesiNgisi, isiFulentshi, isi-Arabhu, isiPutukezi nesiSwahili. Kwezinye izilimi izimpendulo zingaba buthakathaka; ikhodi ayishintshi.",
     draftNote: "Lokhu kuhumusha kuwuhlaka lokuqala. Sisize sikuthuthukise.",
     statusReady: "Kulungile", statusStarting: "Iyaqala…", statusWaking: "Ivusa iseva…", statusOffline: "Ayikwazi ukufinyelela umsizi", statusFailed: "Yehlulekile ukuqala",
     tabChat: "Ingxoxo", tabGenerate: "Dala", tabExplain: "Chaza", tabDebug: "Thola amaphutha", tabOptimize: "Thuthukisa", tabTranslate: "Humusha ikhodi", tabDocs: "Imibhalo", tabQuiz: "Imibuzo", tabProject: "Iphrojekthi",
@@ -151,7 +147,6 @@ export const LOCALES: Locale[] = [
 
   { code: "xh", name: "isiXhosa", english: "Xhosa", reviewed: false, strings: {
     tagline: "Umncedisi wekhowudi ongafuni i-intanethi", uiLanguage: "Ulwimi", replyLanguage: "I-AI iphendula nge",
-    replyHint: "I-AI engaxhunywanga ibhala ngcono ngesiNgesi, isiFrentshi, isiArabhu, isiPhuthukezi nesiSwahili. Kwezinye iilwimi iimpendulo zinokuba buthathaka; ikhowudi ayitshintshi.",
     draftNote: "Le nguqulelo luyilo lokuqala. Sincede siyiphucule.",
     statusReady: "Ilungile", statusStarting: "Iyaqala…", statusWaking: "Ivusa iseva…", statusOffline: "Ayikwazi ukufikelela umncedisi", statusFailed: "Ayikwazanga ukuqala",
     tabChat: "Incoko", tabGenerate: "Yila", tabExplain: "Cacisa", tabDebug: "Fumana iimpazamo", tabOptimize: "Phucula", tabTranslate: "Guqulela ikhowudi", tabDocs: "Amaxwebhu", tabQuiz: "Imibuzo", tabProject: "Iprojekthi",
@@ -166,7 +161,6 @@ export const LOCALES: Locale[] = [
 
   { code: "af", name: "Afrikaans", english: "Afrikaans", reviewed: false, strings: {
     tagline: "Kodeerassistent sonder internet", uiLanguage: "Taal", replyLanguage: "KI antwoord in",
-    replyHint: "Die vanlyn-KI skryf die beste in Engels, Frans, Arabies, Portugees en Swahili. In ander tale kan sy antwoorde swakker wees; kode bly dieselfde.",
     draftNote: "Hierdie vertaling is 'n konsep. Help ons om dit te verbeter.",
     statusReady: "Gereed", statusStarting: "Begin tans…", statusWaking: "Maak die bediener wakker…", statusOffline: "Kan nie die assistent bereik nie", statusFailed: "Kon nie begin nie",
     tabChat: "Gesels", tabGenerate: "Genereer", tabExplain: "Verduidelik", tabDebug: "Ontfout", tabOptimize: "Verbeter", tabTranslate: "Vertaal kode", tabDocs: "Dokumentasie", tabQuiz: "Vasvra", tabProject: "Projek",
@@ -181,7 +175,6 @@ export const LOCALES: Locale[] = [
 
   { code: "st", name: "Sesotho", english: "Sesotho", reviewed: false, strings: {
     tagline: "Mothusi wa khoutu ntle le inthanete", uiLanguage: "Puo", replyLanguage: "AI e arabe ka",
-    replyHint: "AI e sa hokahanang e ngola hantle haholo ka Senyesemane, Sefora, Searabia, Sepotokisi le Seswahili. Ka dipuo tse ding dikarabo di ka fokola; khoutu ha e fetohe.",
     draftNote: "Phetolelo ena ke moralo. Re thuse ho e ntlafatsa.",
     statusReady: "E lokile", statusStarting: "E a qala…", statusWaking: "E tsosa seva…", statusOffline: "Ha e kgone ho fihlella mothusi", statusFailed: "E hlolehile ho qala",
     tabChat: "Puisano", tabGenerate: "Etsa", tabExplain: "Hlalosa", tabDebug: "Fumana diphoso", tabOptimize: "Ntlafatsa", tabTranslate: "Fetolela khoutu", tabDocs: "Ditokomane", tabQuiz: "Dipotso", tabProject: "Projeke",
@@ -196,7 +189,6 @@ export const LOCALES: Locale[] = [
 
   { code: "tn", name: "Setswana", english: "Setswana", reviewed: false, strings: {
     tagline: "Mothusi wa khoutu kwa ntle ga inthanete", uiLanguage: "Puo", replyLanguage: "AI e arabe ka",
-    replyHint: "AI e e sa golaganngwang e kwala sentle thata ka Seesemane, Sefora, Searabia, Sepotokisi le Seswahili. Ka dipuo tse dingwe dikarabo di ka nna bokoa; khoutu ga e fetoge.",
     draftNote: "Thanolo e ke tlhomo ya ntlha. Re thuse go e tokafatsa.",
     statusReady: "E siametse", statusStarting: "E a simolola…", statusWaking: "E tsosa sefa…", statusOffline: "Ga e kgone go fitlhelela mothusi", statusFailed: "E paletswe ke go simolola",
     tabChat: "Puisano", tabGenerate: "Dira", tabExplain: "Tlhalosa", tabDebug: "Batla diphoso", tabOptimize: "Tokafatsa", tabTranslate: "Fetolela khoutu", tabDocs: "Dikwalo", tabQuiz: "Dipotso", tabProject: "Porojeke",
@@ -211,7 +203,6 @@ export const LOCALES: Locale[] = [
 
   { code: "sn", name: "chiShona", english: "Shona", reviewed: false, strings: {
     tagline: "Mubatsiri wekodhi asingade indaneti", uiLanguage: "Mutauro", replyLanguage: "AI ipindure nemu",
-    replyHint: "AI isina indaneti inonyora zvakanaka muChirungu, French, Arabic, Portuguese neSwahili. Mumimwe mitauro mhinduro dzinogona kunge dzisina kusimba; kodhi haichinji.",
     draftNote: "Shanduro iyi idhirafti. Tibatsirei kuivandudza.",
     statusReady: "Yakagadzirira", statusStarting: "Iri kutanga…", statusWaking: "Iri kumutsa sevha…", statusOffline: "Haikwanisi kusvika kumubatsiri", statusFailed: "Yatadza kutanga",
     tabChat: "Hurukuro", tabGenerate: "Gadzira", tabExplain: "Tsanangura", tabDebug: "Tsvaga zvikanganiso", tabOptimize: "Vandudza", tabTranslate: "Shandura kodhi", tabDocs: "Magwaro", tabQuiz: "Mibvunzo", tabProject: "Purojekiti",
@@ -226,7 +217,6 @@ export const LOCALES: Locale[] = [
 
   { code: "rw", name: "Ikinyarwanda", english: "Kinyarwanda", reviewed: false, strings: {
     tagline: "Umufasha wa kode udakenera interineti", uiLanguage: "Ururimi", replyLanguage: "AI isubize mu",
-    replyHint: "AI ikora idafite interineti yandika neza cyane mu Cyongereza, Igifaransa, Icyarabu, Igiporutugali n'Igiswahili. Mu zindi ndimi ibisubizo bishobora kuba bidakomeye; kode ntihinduka.",
     draftNote: "Ubu busobanuro ni umushinga. Dufashe kubunoza.",
     statusReady: "Biteguye", statusStarting: "Biratangira…", statusWaking: "Birakangura seriveri…", statusOffline: "Ntibishoboka kugera ku mufasha", statusFailed: "Byananiwe gutangira",
     tabChat: "Ikiganiro", tabGenerate: "Kora", tabExplain: "Sobanura", tabDebug: "Shaka amakosa", tabOptimize: "Noza", tabTranslate: "Hindura kode", tabDocs: "Inyandiko", tabQuiz: "Ibibazo", tabProject: "Umushinga",
@@ -241,7 +231,6 @@ export const LOCALES: Locale[] = [
 
   { code: "lg", name: "Luganda", english: "Luganda", reviewed: false, strings: {
     tagline: "Omuyambi wa koodi atali ku yintaneeti", uiLanguage: "Olulimi", replyLanguage: "AI eddamu mu",
-    replyHint: "AI etali ku yintaneeti ewandiika bulungi nnyo mu Lungereza, Lufalansa, Luwarabu, Lupotugiizi ne Luswayiri. Mu nnimi endala okuddamu kuyinza okuba okunafu; koodi tekyuka.",
     draftNote: "Okuvvuunula kuno kwa kugezaako. Tuyambe tukulongoose.",
     statusReady: "Kyetegese", statusStarting: "Kitandika…", statusWaking: "Kizuukusa seva…", statusOffline: "Tekisobola kutuuka ku muyambi", statusFailed: "Kilemeddwa okutandika",
     tabChat: "Okunyumya", tabGenerate: "Kola", tabExplain: "Nnyonnyola", tabDebug: "Noonya ensobi", tabOptimize: "Longoosa", tabTranslate: "Vvuunula koodi", tabDocs: "Ebiwandiiko", tabQuiz: "Ebibuuzo", tabProject: "Pulojekiti",
@@ -256,7 +245,6 @@ export const LOCALES: Locale[] = [
 
   { code: "ak", name: "Twi (Akan)", english: "Twi (Akan)", reviewed: false, strings: {
     tagline: "Kood boafoɔ a ɛnhia intanɛt", uiLanguage: "Kasa", replyLanguage: "AI mmua wɔ",
-    replyHint: "AI a ɛnni intanɛt so no kyerɛw yie wɔ Borɔfo, Frɛnkye, Arabik, Potugi ne Swahili mu. Kasa foforɔ mu no ne mmuaeɛ betumi ayɛ mmerɛ; kood no nsesa.",
     draftNote: "Nkyerɛaseɛ yi yɛ nhyehyɛeɛ a edi kan. Boa yɛn na yɛnyɛ no yie.",
     statusReady: "Ayɛ krado", statusStarting: "Ɛrefi aseɛ…", statusWaking: "Ɛrenyane server no…", statusOffline: "Entumi nnu boafoɔ no nkyɛn", statusFailed: "Antumi amfi aseɛ",
     tabChat: "Nkɔmmɔ", tabGenerate: "Yɛ", tabExplain: "Kyerɛkyerɛ mu", tabDebug: "Hwehwɛ mfomsoɔ", tabOptimize: "Ma ɛnyɛ yie", tabTranslate: "Kyerɛ kood ase", tabDocs: "Nwoma", tabQuiz: "Nsɛmmisa", tabProject: "Adwuma",
@@ -271,7 +259,6 @@ export const LOCALES: Locale[] = [
 
   { code: "wo", name: "Wolof", english: "Wolof", reviewed: false, strings: {
     tagline: "Ndimbal ci kood te soxlawul internet", uiLanguage: "Làkk", replyLanguage: "AI di tontu ci",
-    replyHint: "AI bi dafa bind bu baax ci Angale, Farañse, Araab, Portige ak Swahili. Ci yeneen làkk yi tontu yi man nañoo néew; kood bi du soppiku.",
     draftNote: "Firi bii ab ndegg la. Dimbali nu ñu gën ko defar.",
     statusReady: "Pare na", statusStarting: "Mu ngi tàmbali…", statusWaking: "Mu ngi yee serwëër bi…", statusOffline: "Manul a jot ci ndimbal bi", statusFailed: "Manul a tàmbali",
     tabChat: "Waxtaan", tabGenerate: "Sos", tabExplain: "Leeral", tabDebug: "Seet njuumte", tabOptimize: "Gën a defar", tabTranslate: "Firi kood", tabDocs: "Dokimaa", tabQuiz: "Laaj", tabProject: "Projet",
@@ -286,7 +273,6 @@ export const LOCALES: Locale[] = [
 
   { code: "ln", name: "Lingála", english: "Lingala", reviewed: false, strings: {
     tagline: "Mosungi ya kode oyo esengeli te internet", uiLanguage: "Monoko", replyLanguage: "AI ezongisa na",
-    replyHint: "AI oyo esalaka sans internet ekomaka malamu mingi na Lingelesi, Lifalanse, Liarabe, Lipulutugɛ́si mpe Swahili. Na minoko mosusu biyano ekoki kozala makasi te; kode ebongwanaka te.",
     draftNote: "Libongoli oyo ezali ebandeli. Salisa biso tobongisa yango.",
     statusReady: "Ezali pene", statusStarting: "Ezali kobanda…", statusWaking: "Ezali kolamwisa serveur…", statusOffline: "Ekoki kokóma epai ya mosungi te", statusFailed: "Ekoki kobanda te",
     tabChat: "Lisolo", tabGenerate: "Sala", tabExplain: "Limbola", tabDebug: "Luka mabunga", tabOptimize: "Bongisa", tabTranslate: "Bongola kode", tabDocs: "Mikanda", tabQuiz: "Mituna", tabProject: "Mosala",
@@ -301,7 +287,6 @@ export const LOCALES: Locale[] = [
 
   { code: "mg", name: "Malagasy", english: "Malagasy", reviewed: false, strings: {
     tagline: "Mpanampy amin'ny kaody tsy mila aterineto", uiLanguage: "Fiteny", replyLanguage: "Hamaly amin'ny",
-    replyHint: "Ny AI tsy mila aterineto dia manoratra tsara indrindra amin'ny teny anglisy, frantsay, arabo, portiogey ary soahily. Amin'ny fiteny hafa dia mety ho malemy ny valiny; tsy miova ny kaody.",
     draftNote: "Drafitra ity fandikana ity. Ampio izahay hanatsara azy.",
     statusReady: "Vonona", statusStarting: "Manomboka…", statusWaking: "Mamoha ny mpizara…", statusOffline: "Tsy tratra ny mpanampy", statusFailed: "Tsy afaka nanomboka",
     tabChat: "Resaka", tabGenerate: "Mamorona", tabExplain: "Hazavao", tabDebug: "Hitady hadisoana", tabOptimize: "Hanatsara", tabTranslate: "Handika kaody", tabDocs: "Antontan-taratasy", tabQuiz: "Fanontaniana", tabProject: "Tetikasa",
@@ -316,7 +301,7 @@ export const LOCALES: Locale[] = [
 
   { code: "ar", name: "العربية", english: "Arabic", dir: "rtl", reviewed: false, strings: {
     tagline: "مساعد برمجة يعمل دون إنترنت", uiLanguage: "اللغة", replyLanguage: "لغة إجابات الذكاء الاصطناعي",
-    replyHint: "يكتب الذكاء الاصطناعي المحلي أفضل بالإنجليزية والفرنسية والعربية والبرتغالية والسواحيلية. قد تكون إجاباته أضعف في اللغات الأخرى؛ أما الشيفرة فتبقى كما هي.",
+    replyHint: "يجيب الذكاء الاصطناعي المحلي جيدًا بالإنجليزية والفرنسية والبرتغالية والعربية. اللغات الأفريقية تجريبية: قد تكون الإجابات خاطئة أو صعبة الفهم. أما الشيفرة فتبقى كما هي.", experimentalTag: "تجريبية", experimentalReply: "الإجابات بلغة {lang} تجريبية. لا يعرف الذكاء الاصطناعي المحلي هذه اللغة جيدًا بعد، لذا قد تكون الشروح خاطئة أو غير مفهومة. للأسئلة المهمة، اختر الإنجليزية أو الفرنسية لغةً للإجابات.",
     draftNote: "هذه الترجمة مسودة. ساعدنا في تحسينها.",
     statusReady: "جاهز", statusStarting: "جارٍ التشغيل…", statusWaking: "جارٍ إيقاظ الخادم…", statusOffline: "تعذّر الوصول إلى المساعد", statusFailed: "تعذّر التشغيل",
     tabChat: "محادثة", tabGenerate: "إنشاء", tabExplain: "شرح", tabDebug: "تصحيح الأخطاء", tabOptimize: "تحسين", tabTranslate: "ترجمة الشيفرة", tabDocs: "التوثيق", tabQuiz: "اختبار", tabProject: "مشروع",
@@ -331,7 +316,7 @@ export const LOCALES: Locale[] = [
 
   { code: "fr", name: "Français", english: "French", reviewed: false, strings: {
     tagline: "Assistant de programmation hors ligne", uiLanguage: "Langue", replyLanguage: "L'IA répond en",
-    replyHint: "L'IA hors ligne écrit le mieux en anglais, français, arabe, portugais et swahili. Dans d'autres langues, ses réponses peuvent être moins bonnes ; le code reste le même.",
+    replyHint: "L'IA hors ligne répond bien en anglais, français, portugais et arabe. Les langues africaines sont expérimentales : les réponses peuvent être fausses ou difficiles à lire. Le code reste le même.", experimentalTag: "expérimental", experimentalReply: "Les réponses en {lang} sont expérimentales. L'IA hors ligne ne connaît pas encore bien cette langue : les explications peuvent être fausses ou incompréhensibles. Pour les questions importantes, choisissez l'anglais ou le français.",
     draftNote: "Cette traduction est un brouillon. Aidez-nous à l'améliorer.",
     statusReady: "Prêt", statusStarting: "Démarrage…", statusWaking: "Réveil du serveur…", statusOffline: "Impossible de joindre l'assistant", statusFailed: "Échec du démarrage",
     tabChat: "Discussion", tabGenerate: "Générer", tabExplain: "Expliquer", tabDebug: "Déboguer", tabOptimize: "Optimiser", tabTranslate: "Traduire le code", tabDocs: "Documentation", tabQuiz: "Quiz", tabProject: "Projet",
@@ -346,7 +331,7 @@ export const LOCALES: Locale[] = [
 
   { code: "pt", name: "Português", english: "Portuguese", reviewed: false, strings: {
     tagline: "Assistente de programação offline", uiLanguage: "Idioma", replyLanguage: "A IA responde em",
-    replyHint: "A IA offline escreve melhor em inglês, francês, árabe, português e suaíli. Noutras línguas as respostas podem ser mais fracas; o código é sempre o mesmo.",
+    replyHint: "A IA offline responde bem em inglês, francês, português e árabe. As línguas africanas são experimentais: as respostas podem estar erradas ou ser difíceis de ler. O código é sempre o mesmo.", experimentalTag: "experimental", experimentalReply: "As respostas em {lang} são experimentais. A IA offline ainda não conhece bem esta língua, por isso as explicações podem estar erradas ou não fazer sentido. Para perguntas importantes, escolha inglês ou francês.",
     draftNote: "Esta tradução é um rascunho. Ajude-nos a melhorá-la.",
     statusReady: "Pronto", statusStarting: "A iniciar…", statusWaking: "A acordar o servidor…", statusOffline: "Não é possível contactar o assistente", statusFailed: "Falha ao iniciar",
     tabChat: "Conversa", tabGenerate: "Gerar", tabExplain: "Explicar", tabDebug: "Depurar", tabOptimize: "Otimizar", tabTranslate: "Traduzir código", tabDocs: "Documentação", tabQuiz: "Quiz", tabProject: "Projeto",

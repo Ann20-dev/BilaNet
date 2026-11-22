@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, API_URL, IS_DESKTOP } from "./api";
-import { I18nProvider, LOCALES, useI18n } from "./i18n";
+import { I18nProvider, LOCALES, STABLE_REPLY_LANGUAGES, useI18n } from "./i18n";
 import type { StringKey } from "./i18n/en";
 import { ChatTab } from "./tabs/ChatTab";
 import { CodeTab, type CodeMode } from "./tabs/CodeTab";
@@ -101,12 +101,21 @@ function Shell() {
           </label>
           <label className="field" title={t("replyHint")}>{t("replyLanguage")}
             <select value={replyLanguage} onChange={e => setReplyLanguage(e.target.value)}>
-              {LOCALES.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
+              {LOCALES.map(l => (
+                <option key={l.code} value={l.code}>
+                  {l.name}{STABLE_REPLY_LANGUAGES.includes(l.code) ? "" : ` (${t("experimentalTag")})`}
+                </option>
+              ))}
             </select>
           </label>
         </div>
       </header>
       {!locale.reviewed && <div className="draft">{t("draftNote")}</div>}
+      {!STABLE_REPLY_LANGUAGES.includes(replyLanguage) && (
+        <div className="notice experimental" role="status">
+          {t("experimentalReply", { lang: LOCALES.find(l => l.code === replyLanguage)?.name ?? replyLanguage })}
+        </div>
+      )}
 
       {needsModel && (
         <div className="notice setup">

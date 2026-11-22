@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { en, type StringKey } from "./en";
-import { LOCALES, type Locale } from "./locales";
+import { LOCALES, STABLE_REPLY_LANGUAGES, type Locale } from "./locales";
 
-export { LOCALES };
+export { LOCALES, STABLE_REPLY_LANGUAGES };
 
 type Ctx = {
   locale: Locale;
@@ -25,10 +25,18 @@ function initialLocale(): string {
   return LOCALES.some(l => l.code === browser) ? browser : "en";
 }
 
+// The language the AI answers in when the user has not picked one: the UI language if the
+// model writes it reliably, otherwise French where it is widely read, otherwise English.
+const FRENCH_FIRST = ["wo", "ln", "mg"];
+function defaultReply(ui: string): string {
+  if (STABLE_REPLY_LANGUAGES.includes(ui)) return ui;
+  return FRENCH_FIRST.includes(ui) ? "fr" : "en";
+}
+
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [code, setCode] = useState(initialLocale);
   // By default the AI answers in the UI language; the user can pick a different one.
-  const [reply, setReply] = useState(() => load("bilanet.reply") || code);
+  const [reply, setReply] = useState(() => load("bilanet.reply") || defaultReply(code));
   const locale = LOCALES.find(l => l.code === code) ?? LOCALES[0];
 
   useEffect(() => {
@@ -41,7 +49,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLocale: (c) => {
       setCode(c); save("bilanet.ui", c);
       // Keep the AI language in step unless the user chose one on purpose.
-      if (!load("bilanet.reply")) setReply(c);
+      if (!load("bilanet.reply")) setReply(defaultReply(c));
     },
     replyLanguage: reply,
     setReplyLanguage: (c) => { setReply(c); save("bilanet.reply", c); },

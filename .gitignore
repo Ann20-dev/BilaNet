@@ -20,3 +20,6 @@ dist/
 bilanet/backend/build/
 bilanet/backend/dist/
 *.spec
+
+# Personal Claude Code settings
+.claude/settings.local.json
