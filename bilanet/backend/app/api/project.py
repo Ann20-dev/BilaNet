@@ -23,5 +23,5 @@ def get_template(template_id: str):
 @router.post("/project/scaffold")
 def scaffold(req: ScaffoldRequest):
     """Custom project structure and boilerplate written by the AI."""
-    text = get_provider().generate(prompts.scaffold(req.description, req.stack), system=prompts.system_prompt(req.reply_language))
+    text = get_provider().generate(prompts.with_reply_language(prompts.scaffold(req.description, req.stack), req.reply_language), system=prompts.system_prompt(req.reply_language))
     return {"plan": text}

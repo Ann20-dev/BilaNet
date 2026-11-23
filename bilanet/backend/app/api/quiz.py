@@ -29,12 +29,12 @@ def questions(topic: str | None = None, level: str | None = None, count: int = 1
 @router.post("/quiz/challenge")
 def challenge(req: QuizChallengeRequest):
     """A new practice challenge written by the AI."""
-    text = get_provider().generate(prompts.quiz_challenge(req.topic, req.level), system=prompts.system_prompt(req.reply_language))
+    text = get_provider().generate(prompts.with_reply_language(prompts.quiz_challenge(req.topic, req.level), req.reply_language), system=prompts.system_prompt(req.reply_language))
     return {"challenge": text}
 
 
 @router.post("/quiz/check")
 def check(req: QuizCheckRequest):
     """The AI reviews the student's solution to a challenge."""
-    text = get_provider().generate(prompts.quiz_check(req.challenge, req.solution, req.language), system=prompts.system_prompt(req.reply_language))
+    text = get_provider().generate(prompts.with_reply_language(prompts.quiz_check(req.challenge, req.solution, req.language), req.reply_language), system=prompts.system_prompt(req.reply_language))
     return {"feedback": text}

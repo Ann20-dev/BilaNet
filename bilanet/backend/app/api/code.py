@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 def run(prompt: str, req: CodeRequest) -> str:
-    return get_provider().generate(prompt, system=prompts.system_prompt(req.reply_language))
+    return get_provider().generate(prompts.with_reply_language(prompt, req.reply_language), system=prompts.system_prompt(req.reply_language))
 
 
 def need_code(req: CodeRequest):

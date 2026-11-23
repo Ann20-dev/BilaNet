@@ -109,3 +109,12 @@ def test_model_unloads_when_idle(tmp_path, monkeypatch):
         time.sleep(0.1)
     assert p.llm is None  # RAM given back
     assert p.generate("again") == "hi"  # and it reloads on the next question
+
+
+def test_reply_language_reminder_goes_at_the_end():
+    from app import prompts
+    assert prompts.with_reply_language("Q", "en") == "Q"
+    assert prompts.with_reply_language("Q", None) == "Q"
+    assert prompts.with_reply_language("Q", "fr") == "Q\n\nRéponds en français."
+    assert prompts.with_reply_language("Q", "sw").endswith("Answer in Swahili (Kiswahili).")
+    assert prompts.with_reply_language("Q", "xx") == "Q"  # unknown code: leave the question alone

@@ -22,5 +22,5 @@ def chat(req: ChatRequest):
         snippets = [{"title": h["title"], "text": (h["signature"] and h["title"] + h["signature"] + "\n") + h["text"][:DOC_CHARS]} for h in hits]
         question = prompts.with_docs(question, snippets)
         sources = [{"title": h["title"], "library": h["library"]} for h in hits]
-    response = get_provider().generate(question, system=prompts.system_prompt(req.reply_language))
+    response = get_provider().generate(prompts.with_reply_language(question, req.reply_language), system=prompts.system_prompt(req.reply_language))
     return {"response": response, "sources": sources}
