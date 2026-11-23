@@ -101,6 +101,10 @@ export const en = {
   importModel: "Load model from file",
   importing: "Copying the model file… {done} of {total}",
   importChecking: "Checking the model file…",
+  shareTitle: "Share BilaNet with a laptop that has no internet",
+  shareButton: "Copy model to USB",
+  shareOpened: "The folder with the model file is open. Copy {file} ({size}) to a USB stick, with the BilaNet installer. On the other laptop, click \"Load model from file\".",
+  sharePath: "The model file is here: {path}",
   lowMemoryTip: "Tip: close other heavy apps (like the browser) while BilaNet answers, for the best speed.",
 };
 

@@ -317,6 +317,7 @@ export const LOCALES: Locale[] = [
   } },
 
   { code: "fr", name: "Français", english: "French", reviewed: false, strings: {
+    shareTitle: "Partager BilaNet avec un ordinateur sans internet", shareButton: "Copier le modèle sur une clé USB", shareOpened: "Le dossier du fichier du modèle est ouvert. Copiez {file} ({size}) sur une clé USB, avec l'installateur de BilaNet. Sur l'autre ordinateur, cliquez sur « Charger le modèle depuis un fichier ».", sharePath: "Le fichier du modèle est ici : {path}",
     importHint: "Pas d'internet ? Si un autre ordinateur a déjà le fichier du modèle de BilaNet, copiez-le sur une clé USB et chargez-le ici.", importModel: "Charger le modèle depuis un fichier", importing: "Copie du fichier du modèle… {done} sur {total}", importChecking: "Vérification du fichier du modèle…",
     aiCanBeWrong: "Les réponses de l\'IA peuvent être fausses. Exécutez le code pour vérifier.", runCode: "Exécuter mon code pour trouver la vraie erreur (Python uniquement, arrêt après 5 secondes)", realError: "La vraie erreur de Python quand BilaNet a exécuté votre code", ranOk: "Votre code s\'est exécuté sans erreur. Il a affiché :",
     tagline: "Assistant de programmation hors ligne", uiLanguage: "Langue", replyLanguage: "L'IA répond en",
@@ -334,6 +335,7 @@ export const LOCALES: Locale[] = [
   } },
 
   { code: "pt", name: "Português", english: "Portuguese", reviewed: false, strings: {
+    shareTitle: "Partilhar o BilaNet com um computador sem internet", shareButton: "Copiar modelo para USB", shareOpened: "A pasta com o ficheiro do modelo está aberta. Copie {file} ({size}) para uma pen USB, com o instalador do BilaNet. No outro computador, clique em “Carregar modelo de um ficheiro”.", sharePath: "O ficheiro do modelo está aqui: {path}",
     importHint: "Sem internet? Se outro computador já tem o ficheiro do modelo do BilaNet, copie-o para uma pen USB e carregue-o aqui.", importModel: "Carregar modelo de um ficheiro", importing: "A copiar o ficheiro do modelo… {done} de {total}", importChecking: "A verificar o ficheiro do modelo…",
     aiCanBeWrong: "As respostas da IA podem estar erradas. Execute o código para confirmar.", runCode: "Executar o meu código para encontrar o erro real (só Python, para após 5 segundos)", realError: "O erro real do Python quando o BilaNet executou o seu código", ranOk: "O seu código executou sem erros. Mostrou:",
     tagline: "Assistente de programação offline", uiLanguage: "Idioma", replyLanguage: "A IA responde em",
