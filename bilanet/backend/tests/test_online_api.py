@@ -65,3 +65,12 @@ def test_main_model_errors_are_not_hidden(calls):
     with pytest.raises(HTTPException) as e:
         provider().generate("q")
     assert e.value.status_code == 502 and len(sent) == 1
+
+
+def test_online_server_cannot_index_its_own_folders(monkeypatch, tmp_path):
+    from fastapi.testclient import TestClient
+    from app.main import app
+    (tmp_path / "secret.txt").write_text("server secret")
+    monkeypatch.setenv("AI_PROVIDER", "api")
+    r = TestClient(app).post("/api/v1/documents/index", json={"directory": str(tmp_path)})
+    assert r.status_code == 403
