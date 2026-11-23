@@ -80,6 +80,28 @@ function Shell() {
     if (r.ok && !r.data.started && r.data.reason) setStartError(r.data.reason);
     refreshModel();
   };
+  // Load the model from a file (e.g. a USB stick) for schools with little or no internet.
+  // The file is sent to the local backend, which checks it is an undamaged BilaNet model.
+  const [importing, setImporting] = useState<{ done: number; total: number } | null>(null);
+  const importModel = (file: File) => {
+    setStartError(undefined);
+    setImporting({ done: 0, total: file.size });
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", API_URL + "/api/v1/model/import");
+    xhr.setRequestHeader("Content-Type", "application/octet-stream");
+    xhr.upload.onprogress = e => setImporting({ done: e.loaded, total: e.total || file.size });
+    xhr.onload = () => {
+      setImporting(null);
+      if (xhr.status !== 200) {
+        let detail = xhr.responseText;
+        try { detail = JSON.parse(xhr.responseText).detail ?? detail; } catch { /* plain text */ }
+        setStartError(detail || `Error ${xhr.status}`);
+      }
+      refreshModel();
+    };
+    xhr.onerror = () => { setImporting(null); setStartError("Could not load the file. Try again."); };
+    xhr.send(file);
+  };
   const aiDisabled = health !== "ok" || needsModel;
   const statusText = health === "ok" ? t("statusReady")
     : health === "failed" ? `${t("statusFailed")}: ${window.__BILANET_BACKEND_ERROR__}`
@@ -122,7 +144,13 @@ function Shell() {
         <div className="notice setup">
           <b>{t("setupTitle")}</b>
           <p>{t("setupBody", { size: choice ? gb1(choice.size) : "1–2 GB" })}</p>
-          {downloading ? (
+          {importing ? (
+            <>
+              <progress value={importing.done < importing.total ? importing.done : undefined} max={importing.total} />
+              <p className="muted">{importing.done < importing.total
+                ? t("importing", { done: gb(importing.done), total: gb(importing.total) }) : t("importChecking")}</p>
+            </>
+          ) : downloading ? (
             <>
               <progress value={model?.download?.state === "verifying" ? undefined : model?.download?.downloaded ?? 0} max={model?.download?.total || undefined} />
               <p className="muted">{model?.download?.state === "verifying" ? t("verifying")
@@ -155,6 +183,14 @@ function Shell() {
               <button className="primary" disabled={diskShort} onClick={startDownload}>
                 {model?.download?.state === "error" ? t("resumeDownload") : t("downloadModel")}
               </button>
+              <div className="import-model">
+                <p className="muted">{t("importHint")}</p>
+                <label className="button-like">
+                  {t("importModel")}
+                  <input type="file" accept=".gguf" className="visually-hidden"
+                    onChange={e => { const f = e.target.files?.[0]; e.target.value = ""; if (f) importModel(f); }} />
+                </label>
+              </div>
               <p className="muted">{t("lowMemoryTip")}</p>
             </>
           )}

@@ -1,5 +1,8 @@
 from typing import Optional
-from fastapi import APIRouter
+import hashlib
+from fastapi import APIRouter, HTTPException, Request
+from starlette.concurrency import run_in_threadpool
+from starlette.requests import ClientDisconnect
 from pydantic import BaseModel
 from app.core.config import settings
 from app import coderun
@@ -81,3 +84,65 @@ def start_download(req: Optional[DownloadRequest] = None):
 @router.get("/model/download")
 def download_status():
     return download.status()
+
+
+_importing = False
+
+
+@router.post("/model/import")
+async def import_model(request: Request):
+    """Load a model file the student already has (e.g. copied from a friend's laptop on a USB stick).
+
+    For schools with little or no internet: one person downloads the model, everyone else loads
+    it from a USB stick. The file must be one of BilaNet's known models: its size is checked before
+    anything is copied, and its SHA256 while it is copied, so a damaged copy is never used.
+    The body is the raw file (the page sends it straight from the file picker).
+    """
+    global _importing
+    folder = models.models_dir()
+    if not _local() or not folder:
+        raise HTTPException(400, "Loading a model file only works in the desktop app.")
+    size = int(request.headers.get("content-length") or 0)
+    option = next((m for m in models.BY_FILE.values() if m.size == size), None)
+    if option is None:
+        raise HTTPException(422, "This is not a BilaNet model file. Choose the file named "
+                                 f"{models.SMALL.file} (or {models.STANDARD.file}).")
+    if download.status()["state"] in ("downloading", "verifying") or _importing:
+        raise HTTPException(409, "A model is already being downloaded or loaded. Wait for it to finish.")
+    free = models.free_disk(folder)
+    if free and free < size + download.DISK_MARGIN:
+        raise HTTPException(507, f"Not enough free disk space: {(size + download.DISK_MARGIN) / 1e9:.1f} GB needed, "
+                                 f"{free / 1e9:.1f} GB free. Delete some files and try again.")
+    _importing = True
+    os.makedirs(folder, exist_ok=True)
+    part = os.path.join(folder, "import.part")
+    h, got, buf = hashlib.sha256(), 0, bytearray()
+
+    def flush(f, data):
+        f.write(data)
+        h.update(data)
+
+    try:
+        with open(part, "wb") as f:
+            async for chunk in request.stream():
+                buf += chunk
+                got += len(chunk)
+                if len(buf) >= 4 * 1024 * 1024:  # write and hash off the event loop, in big blocks
+                    data, buf = bytes(buf), bytearray()
+                    await run_in_threadpool(flush, f, data)
+            await run_in_threadpool(flush, f, bytes(buf))
+        if got != size:
+            raise HTTPException(422, "The file was not copied completely. Try again.")
+        if h.hexdigest() != option.sha256:
+            raise HTTPException(422, "This model file is damaged (it does not match the original). "
+                                     "Copy it again from the other laptop, or download it.")
+        target = os.path.join(folder, option.file)
+        os.replace(part, target)
+        models.write_selected(target)
+        return {"loaded": True, "model": option.id, "file": option.file}
+    except ClientDisconnect:
+        raise HTTPException(499, "Loading was cancelled.")
+    finally:
+        _importing = False
+        if os.path.exists(part):
+            os.remove(part)

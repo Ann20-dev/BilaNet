@@ -24,6 +24,13 @@ input[type="search"] { flex: 1; min-width: 0; }
 button {
   background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 6px 14px; min-height: 34px; cursor: pointer;
 }
+/* A <label> wrapping a hidden file input, styled like a button (keyboard: focus shows via the input). */
+.button-like { display: inline-flex; align-items: center; cursor: pointer; padding: 6px 14px; min-height: 34px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font: inherit; }
+.button-like:hover, .button-like:focus-within { border-color: var(--accent); }
+.button-like:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.import-model { border-top: 1px solid var(--warn-border); margin-top: 10px; padding-top: 6px; }
 button:hover:not(:disabled) { border-color: var(--accent); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }

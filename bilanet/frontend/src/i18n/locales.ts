@@ -317,6 +317,7 @@ export const LOCALES: Locale[] = [
   } },
 
   { code: "fr", name: "Français", english: "French", reviewed: false, strings: {
+    importHint: "Pas d'internet ? Si un autre ordinateur a déjà le fichier du modèle de BilaNet, copiez-le sur une clé USB et chargez-le ici.", importModel: "Charger le modèle depuis un fichier", importing: "Copie du fichier du modèle… {done} sur {total}", importChecking: "Vérification du fichier du modèle…",
     aiCanBeWrong: "Les réponses de l\'IA peuvent être fausses. Exécutez le code pour vérifier.", runCode: "Exécuter mon code pour trouver la vraie erreur (Python uniquement, arrêt après 5 secondes)", realError: "La vraie erreur de Python quand BilaNet a exécuté votre code", ranOk: "Votre code s\'est exécuté sans erreur. Il a affiché :",
     tagline: "Assistant de programmation hors ligne", uiLanguage: "Langue", replyLanguage: "L'IA répond en",
     replyHint: "L'IA hors ligne répond bien en anglais, français et portugais. L'arabe et les langues africaines sont expérimentaux : les réponses peuvent être fausses ou difficiles à lire. Le code reste le même.", experimentalTag: "expérimental", experimentalReply: "Les réponses en {lang} sont expérimentales. L'IA hors ligne ne connaît pas encore bien cette langue : les explications peuvent être fausses ou incompréhensibles. Pour les questions importantes, choisissez l'anglais ou le français.",
@@ -333,6 +334,7 @@ export const LOCALES: Locale[] = [
   } },
 
   { code: "pt", name: "Português", english: "Portuguese", reviewed: false, strings: {
+    importHint: "Sem internet? Se outro computador já tem o ficheiro do modelo do BilaNet, copie-o para uma pen USB e carregue-o aqui.", importModel: "Carregar modelo de um ficheiro", importing: "A copiar o ficheiro do modelo… {done} de {total}", importChecking: "A verificar o ficheiro do modelo…",
     aiCanBeWrong: "As respostas da IA podem estar erradas. Execute o código para confirmar.", runCode: "Executar o meu código para encontrar o erro real (só Python, para após 5 segundos)", realError: "O erro real do Python quando o BilaNet executou o seu código", ranOk: "O seu código executou sem erros. Mostrou:",
     tagline: "Assistente de programação offline", uiLanguage: "Idioma", replyLanguage: "A IA responde em",
     replyHint: "A IA offline responde bem em inglês, francês e português. O árabe e as línguas africanas são experimentais: as respostas podem estar erradas ou ser difíceis de ler. O código é sempre o mesmo.", experimentalTag: "experimental", experimentalReply: "As respostas em {lang} são experimentais. A IA offline ainda não conhece bem esta língua, por isso as explicações podem estar erradas ou não fazer sentido. Para perguntas importantes, escolha inglês ou francês.",

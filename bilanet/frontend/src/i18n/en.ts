@@ -97,6 +97,10 @@ export const en = {
   recommendedTag: "Recommended for this laptop",
   modelTooBig: "This laptop may be too slow for this model. Close other apps while using it.",
   diskTooSmall: "Not enough free disk space: free up at least {size} first.",
+  importHint: "No internet? If another laptop already has BilaNet's model file, copy it to a USB stick and load it here.",
+  importModel: "Load model from file",
+  importing: "Copying the model file… {done} of {total}",
+  importChecking: "Checking the model file…",
   lowMemoryTip: "Tip: close other heavy apps (like the browser) while BilaNet answers, for the best speed.",
 };
 
