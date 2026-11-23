@@ -5,7 +5,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.requests import ClientDisconnect
 from pydantic import BaseModel
 from app.core.config import settings
-from app import coderun, reveal
+from app import coderun
 from app.inference import download, models
 from app.inference.provider import get_provider
 import os
@@ -146,12 +146,3 @@ async def import_model(request: Request):
         _importing = False
         if os.path.exists(part):
             os.remove(part)
-
-
-@router.post("/model/show")
-def show_model_file():
-    """Desktop app: open the file manager at the model file, so it can be copied to a USB stick."""
-    path = models.active_path() if _local() else ""
-    if not path or not os.path.exists(path):
-        raise HTTPException(404, "There is no model file on this computer yet.")
-    return {"path": path, "file": os.path.basename(path), "size": os.path.getsize(path), "opened": reveal.show(path)}

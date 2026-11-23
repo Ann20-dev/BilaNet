@@ -98,7 +98,7 @@ jobs:
 
             On first launch, BilaNet downloads its AI model once: Light (1.1 GB, for 4–6 GB RAM laptops) or Standard (2.1 GB, for 8 GB and up). It recommends the one that fits your laptop. After that it works fully offline.
 
-            No internet? On a laptop where BilaNet already works, click **Copy model to USB** (bottom of the app) and copy that file to a USB stick. On the other laptop, click **Load model from file** on the setup screen. BilaNet checks the copy before using it.
+            No internet? Copy the model file from a laptop that already has it onto a USB stick, then click **Load model from file** on the setup screen. BilaNet checks the copy before using it.
 
             Windows: if SmartScreen warns you, click **More info → Run anyway**. macOS: if it says the app is damaged, run `xattr -cr /Applications/BilaNet.app` once. The AI can make mistakes; check important answers.
           releaseDraft: true

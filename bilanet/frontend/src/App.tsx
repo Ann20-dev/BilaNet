@@ -102,14 +102,6 @@ function Shell() {
     xhr.onerror = () => { setImporting(null); setStartError("Could not load the file. Try again."); };
     xhr.send(file);
   };
-  // After setup: open the folder with the model file so it can be copied to a USB stick.
-  const [shared, setShared] = useState<{ path: string; file: string; size: number; opened: boolean } | null>(null);
-  const [shareError, setShareError] = useState<string>();
-  const showModelFile = async () => {
-    setShareError(undefined);
-    const r = await api<{ path: string; file: string; size: number; opened: boolean }>("/model/show", {});
-    if (r.ok) setShared(r.data); else setShareError(r.error);
-  };
   const aiDisabled = health !== "ok" || needsModel;
   const statusText = health === "ok" ? t("statusReady")
     : health === "failed" ? `${t("statusFailed")}: ${window.__BILANET_BACKEND_ERROR__}`
@@ -221,20 +213,6 @@ function Shell() {
         <div hidden={tab !== "quiz"}><QuizTab ready={health === "ok"} disabled={aiDisabled} /></div>
         <div hidden={tab !== "project"}><ProjectTab ready={health === "ok"} disabled={aiDisabled} /></div>
       </main>
-
-      {model?.provider === "local" && model.model_present && (
-        <footer className="share">
-          <span className="muted">{t("shareTitle")}</span>
-          <button onClick={showModelFile}>{t("shareButton")}</button>
-          {shared && (
-            <p className="muted small">
-              {shared.opened && <>{t("shareOpened", { file: shared.file, size: gb1(shared.size) })} </>}
-              {t("sharePath", { path: shared.path })}
-            </p>
-          )}
-          {shareError && <p className="error-text">{shareError}</p>}
-        </footer>
-      )}
     </div>
   );
 }

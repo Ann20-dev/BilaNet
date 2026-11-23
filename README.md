@@ -111,7 +111,7 @@ BilaNet ships as a desktop app that testers install with a double-click. It work
 2. On first launch, BilaNet recommends a model for your laptop (Light, 1.1 GB, or Standard, 2.1 GB). Click **Download AI model** (one time). If the connection drops, click **Resume download** and it continues where it stopped.
 3. After that, BilaNet works with no internet connection.
 
-**No internet? Share the model on a USB stick.** Only one laptop needs to download the model. On that laptop, click **Copy model to USB** at the bottom of BilaNet: it opens the folder with the model file (`qwen2.5-coder-1.5b-instruct-q4_k_m.gguf` for Light, `qwen2.5-coder-3b-instruct-q4_k_m.gguf` for Standard) so you can copy it to a USB stick. On each other laptop, install BilaNet, click **Load model from file** on the setup screen and pick the file on the USB stick. BilaNet checks that the copy is complete and undamaged before using it. The installer itself can be shared the same way.
+**No internet? Share the model on a USB stick.** Only one laptop needs to download the model. Copy its model file to a USB stick: `qwen2.5-coder-1.5b-instruct-q4_k_m.gguf` (Light) or `qwen2.5-coder-3b-instruct-q4_k_m.gguf` (Standard), in the `models` folder of the app data folder listed below. On each other laptop, install BilaNet, click **Load model from file** on the setup screen and pick the file on the USB stick. BilaNet checks that the copy is complete and undamaged before using it. The installer itself can be shared the same way.
 
 **Requirements:** at least 4 GB RAM (8 GB for the Standard model), a 64-bit CPU from roughly 2015 or newer (needs AVX2), and about 1.5 GB of free disk space (2.5 GB for Standard). On 4 GB laptops, close the browser and other heavy apps while BilaNet answers.
 

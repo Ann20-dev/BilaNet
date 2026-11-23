@@ -48,23 +48,3 @@ def test_damaged_file_is_refused_and_removed(local):
 def test_only_in_desktop_app(local, monkeypatch):
     monkeypatch.setenv("AI_PROVIDER", "api")
     assert send(GOOD).status_code == 400
-
-
-def test_show_model_file_opens_file_manager(local, monkeypatch):
-    from app import reveal
-    opened = []
-    monkeypatch.setattr(reveal, "show", lambda p: opened.append(p) or True)
-    assert client.post("/api/v1/model/show").status_code == 404  # no model yet
-    send(GOOD)
-    r = client.post("/api/v1/model/show").json()
-    assert r["opened"] and r["file"] == "test-model.gguf" and opened == [str(local / "test-model.gguf")]
-    monkeypatch.setenv("AI_PROVIDER", "api")
-    assert client.post("/api/v1/model/show").status_code == 404  # never on the online server
-
-
-def test_file_manager_gets_users_own_libraries(monkeypatch):
-    from app import reveal
-    monkeypatch.setenv("LD_LIBRARY_PATH", "/tmp/_MEI123")
-    monkeypatch.setenv("LD_LIBRARY_PATH_ORIG", "/usr/local/lib")
-    env = reveal._clean_env()
-    assert env["LD_LIBRARY_PATH"] == "/usr/local/lib" and "LD_LIBRARY_PATH_ORIG" not in env
