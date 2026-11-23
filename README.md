@@ -115,4 +115,4 @@ BilaNet ships as a desktop app that testers install with a double-click. It work
 
 **Where data is stored:** the model, chat history and `backend.log` live in the per-user app data folder (`%APPDATA%\com.bilanet.app` on Windows, `~/Library/Application Support/com.bilanet.app` on macOS, `~/.local/share/com.bilanet.app` on Linux).
 
-**Building a new release:** on GitHub go to **Actions → Desktop app → Run workflow** (or push a tag like `v0.1.1`). The installers are attached to a draft release; publish it to share with testers. Bump `version` in `bilanet/frontend/src-tauri/tauri.conf.json` for each new release.
+**Building a new release:** on GitHub go to **Actions → Desktop app → Run workflow** (or push a tag like `v0.1.4`). The installers are attached to a draft release; publish it to share with testers. Bump `version` in `bilanet/frontend/src-tauri/tauri.conf.json` for each new release.

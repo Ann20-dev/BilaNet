@@ -1,7 +1,7 @@
 # Builds the BilaNet desktop installers (Windows .exe/.msi, macOS .dmg, Linux .AppImage/.deb)
 # and attaches them to a draft GitHub release.
 #
-# Run it from GitHub: Actions → "Desktop app" → Run workflow, or push a tag like v0.1.0.
+# Run it from GitHub: Actions → "Desktop app" → Run workflow, or push a tag like v0.1.4.
 name: Desktop app
 
 on:
