@@ -15,7 +15,8 @@ def get_provider():
                              settings.temperature, settings.repeat_penalty)
     if mode == "api":
         # Online demo only: hosted OpenAI-compatible API (default: Groq).
-        return OpenAICompatProvider(settings.api_base_url, settings.api_key, settings.api_model, settings.max_tokens)
+        return OpenAICompatProvider(settings.api_base_url, settings.api_key, settings.api_model, settings.max_tokens,
+                                    fallback_models=[m.strip() for m in settings.api_fallback_models.split(",")])
     return MockProvider()
 
 def is_mock():

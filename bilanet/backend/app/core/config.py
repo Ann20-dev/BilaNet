@@ -27,5 +27,7 @@ class Settings:
     api_base_url: str = os.getenv("AI_API_BASE_URL", "https://api.groq.com/openai/v1")
     api_key: str = os.getenv("AI_API_KEY", "")
     api_model: str = os.getenv("AI_MODEL", "qwen/qwen3.8-27b")
+    # Tried in turn when the main model's free per-minute limit is used up (comma-separated, "" = none).
+    api_fallback_models: str = os.getenv("AI_FALLBACK_MODELS", "openai/gpt-oss-120b,openai/gpt-oss-20b")
 settings = Settings()
 AI_PROVIDER = __import__('os').getenv('AI_PROVIDER','mock')
