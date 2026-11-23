@@ -2,6 +2,7 @@ from typing import Optional
 from fastapi import APIRouter
 from pydantic import BaseModel
 from app.core.config import settings
+from app import coderun
 from app.inference import download, models
 from app.inference.provider import get_provider
 import os
@@ -37,6 +38,7 @@ def status():
         "loaded": loaded,
         "ready": real_configured or api_ready,
         "download": download.status(),
+        "can_run_code": coderun.allowed(),
     }
     if local:
         # First-run setup info: what this laptop can run and whether there is room for it.

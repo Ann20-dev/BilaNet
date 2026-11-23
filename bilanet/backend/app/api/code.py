@@ -32,7 +32,7 @@ def exp(req: CodeRequest):
 def dbg(req: CodeRequest):
     need_code(req)
     ran = None
-    if req.language == "python" and req.run_code and not (req.error or "").strip():
+    if req.language == "python" and req.run_code and coderun.allowed() and not (req.error or "").strip():
         ran = coderun.run(req.code)
     return {"debug": run(prompts.debug(req.code, req.language, req.error, ran), req), "run": ran}
 

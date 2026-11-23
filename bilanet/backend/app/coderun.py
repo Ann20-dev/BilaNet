@@ -24,6 +24,12 @@ MAX_OUTPUT = 2000
 MEMORY_LIMIT = 512 * 1024 * 1024
 
 
+def allowed():
+    """Only run code on the student's own computer. The online demo (AI_PROVIDER=api) runs
+    on a shared server, where a stranger's code could read the server's secrets."""
+    return os.getenv("AI_PROVIDER", "mock").lower() != "api" and os.getenv("ALLOW_CODE_RUN", "1") != "0"
+
+
 def syntax_error(code):
     """The SyntaxError message (with line number) or None. Runs nothing."""
     try:

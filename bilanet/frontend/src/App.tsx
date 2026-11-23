@@ -18,6 +18,7 @@ type ModelStatus = {
   disk_free?: number;
   recommended?: string;
   options?: ModelOption[];
+  can_run_code?: boolean;
 };
 type Tab = "chat" | CodeMode | "docs" | "quiz" | "project";
 const TABS: [Tab, StringKey][] = [
@@ -170,7 +171,7 @@ function Shell() {
       <main>
         <div hidden={tab !== "chat"}><ChatTab disabled={aiDisabled} prefill={prefill} /></div>
         {(["generate", "explain", "debug", "optimize", "translate"] as CodeMode[]).map(m => (
-          <div key={m} hidden={tab !== m}><CodeTab mode={m} disabled={aiDisabled} code={code} setCode={setCode} /></div>
+          <div key={m} hidden={tab !== m}><CodeTab mode={m} disabled={aiDisabled} code={code} setCode={setCode} canRunCode={model?.can_run_code === true} /></div>
         ))}
         <div hidden={tab !== "docs"}><DocsTab ready={health === "ok"} onAsk={q => { setPrefill({ text: q, n: Date.now() }); setTab("chat"); }} /></div>
         <div hidden={tab !== "quiz"}><QuizTab ready={health === "ok"} disabled={aiDisabled} /></div>

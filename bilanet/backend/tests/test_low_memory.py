@@ -164,3 +164,20 @@ def test_debug_endpoint_runs_python_and_returns_real_error(monkeypatch):
     r = client.post("/api/v1/code/debug", json={"code": "print(1/0)\n", "language": "python", "run_code": False}).json()
     assert r["run"] is None
     get_provider.cache_clear()
+
+
+def test_online_server_never_runs_student_code(monkeypatch):
+    # The online demo runs on a shared server: a stranger's code must not run there.
+    from app.inference.provider import get_provider
+    from app import coderun
+    monkeypatch.setenv("AI_PROVIDER", "api")
+    assert not coderun.allowed()
+    assert client.get("/api/v1/model/status").json()["can_run_code"] is False
+    called = []
+    monkeypatch.setattr(coderun, "run", lambda code: called.append(code))
+    monkeypatch.setattr("app.api.code.get_provider", lambda: type("P", (), {"generate": lambda self, p, system=None: "ok"})())
+    r = client.post("/api/v1/code/debug", json={"code": "print(1/0)\n", "language": "python"}).json()
+    assert r["run"] is None and called == []
+    monkeypatch.setenv("AI_PROVIDER", "local")
+    assert coderun.allowed()
+    get_provider.cache_clear()

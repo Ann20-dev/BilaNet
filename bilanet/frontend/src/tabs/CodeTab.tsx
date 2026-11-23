@@ -16,7 +16,7 @@ const MODES: Record<CodeMode, { path: string; field: string; button: StringKey }
 };
 
 // One shared code box across the code tabs, so you can paste once, explain, then debug, then translate.
-export function CodeTab({ mode, disabled, code, setCode }: { mode: CodeMode; disabled: boolean; code: string; setCode: (c: string) => void }) {
+export function CodeTab({ mode, disabled, code, setCode, canRunCode }: { mode: CodeMode; disabled: boolean; code: string; setCode: (c: string) => void; canRunCode: boolean }) {
   const { t, replyLanguage } = useI18n();
   const [lang, setLang] = useState("python");
   const [target, setTarget] = useState("javascript");
@@ -35,7 +35,7 @@ export function CodeTab({ mode, disabled, code, setCode }: { mode: CodeMode; dis
     setLoading(true); setError("");
     const res = await api(m.path, {
       code, language: lang, description, target_language: target,
-      error: errorMsg || null, reply_language: replyLanguage, run_code: runCode,
+      error: errorMsg || null, reply_language: replyLanguage, run_code: canRunCode && runCode,
     });
     setLoading(false);
     if (mode === "debug") setRan(res.ok ? res.data.run ?? null : null);
@@ -63,7 +63,7 @@ export function CodeTab({ mode, disabled, code, setCode }: { mode: CodeMode; dis
       {mode === "debug" && (
         <textarea className="code" dir="ltr" spellCheck={false} value={errorMsg} onChange={e => setErrorMsg(e.target.value)} rows={2} placeholder={t("errorPlaceholder")} />
       )}
-      {mode === "debug" && lang === "python" && (
+      {mode === "debug" && lang === "python" && canRunCode && (
         <label className="check">
           <input type="checkbox" checked={runCode} onChange={e => setRunCode(e.target.checked)} />
           {t("runCode")}
