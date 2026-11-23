@@ -81,3 +81,25 @@ def test_docs_search_and_rag():
 
 def test_input_too_long_rejected():
     assert client.post("/api/v1/code/explain", json={"code": "x" * 20000}).status_code == 422
+
+
+def test_quiz_questions_in_french_and_portuguese():
+    from fastapi.testclient import TestClient
+    from app.main import app
+    from app.api.quiz import QUESTIONS
+    c = TestClient(app)
+    # Every built-in question has a full French and Portuguese version; code stays unchanged.
+    for q in QUESTIONS:
+        for lang in ("fr", "pt"):
+            t = q["translations"][lang]
+            assert t["question"] and t["explanation"], (q["id"], lang)
+            assert len(t.get("options", q["options"])) == len(q["options"]), (q["id"], lang)
+    fr = c.get("/api/v1/quiz/questions?topic=python&count=50&lang=fr").json()
+    assert all("translations" not in q for q in fr)
+    py3 = next(q for q in fr if q["id"] == "py3")
+    assert py3["question"].startswith("Quelle ligne") and py3["options"][1] == "def greet():"
+    pt = c.get("/api/v1/quiz/questions?topic=general&count=50&lang=pt").json()
+    assert next(q for q in pt if q["id"] == "gen1")["options"][0] == "Um vírus"
+    # Other languages fall back to English.
+    sw = c.get("/api/v1/quiz/questions?topic=python&count=50&lang=sw").json()
+    assert next(q for q in sw if q["id"] == "py3")["question"].startswith("Which line")

@@ -18,12 +18,19 @@ def topics():
     return out
 
 
+def _in_language(q, lang):
+    """The question in `lang` (French or Portuguese) when translated; English otherwise. Code never changes."""
+    out = {k: v for k, v in q.items() if k != "translations"}
+    out.update(q.get("translations", {}).get((lang or "en").lower(), {}))
+    return out
+
+
 @router.get("/quiz/questions")
-def questions(topic: str | None = None, level: str | None = None, count: int = 10):
+def questions(topic: str | None = None, level: str | None = None, count: int = 10, lang: str = "en"):
     """Built-in multiple-choice questions. Instant and offline: no AI model needed."""
     pool = [q for q in QUESTIONS if (not topic or q["topic"] == topic) and (not level or q["level"] == level)]
     random.shuffle(pool)
-    return pool[: max(1, min(count, 50))]
+    return [_in_language(q, lang) for q in pool[: max(1, min(count, 50))]]
 
 
 @router.post("/quiz/challenge")

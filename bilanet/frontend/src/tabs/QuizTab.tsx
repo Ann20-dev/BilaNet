@@ -41,9 +41,14 @@ export function QuizTab({ ready, disabled }: { ready: boolean; disabled: boolean
   );
 }
 
+const QUIZ_LANGUAGES = ["en", "fr", "pt"];
+
 // Multiple-choice questions bundled with the app: instant, no AI model needed.
 function BuiltInQuiz({ topic, level, ready }: { topic: string; level: string; ready: boolean }) {
-  const { t } = useI18n();
+  const { t, locale, replyLanguage } = useI18n();
+  // Built-in questions exist in English, French and Portuguese: use the interface language,
+  // else the answer language (e.g. French for a Wolof interface), else English.
+  const lang = QUIZ_LANGUAGES.includes(locale.code) ? locale.code : QUIZ_LANGUAGES.includes(replyLanguage) ? replyLanguage : "en";
   const [qs, setQs] = useState<Question[]>([]);
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
@@ -53,8 +58,8 @@ function BuiltInQuiz({ topic, level, ready }: { topic: string; level: string; re
   async function start() {
     setError("");
     // Fall back to all levels for the topic when a level has few questions.
-    let res = await api<Question[]>(`/quiz/questions?topic=${topic}&level=${level}&count=10`);
-    if (res.ok && res.data.length < 3) res = await api<Question[]>(`/quiz/questions?topic=${topic}&count=10`);
+    let res = await api<Question[]>(`/quiz/questions?topic=${topic}&level=${level}&count=10&lang=${lang}`);
+    if (res.ok && res.data.length < 3) res = await api<Question[]>(`/quiz/questions?topic=${topic}&count=10&lang=${lang}`);
     if (!res.ok) return setError(res.error);
     setQs(res.data); setI(0); setPicked(null); setScore(0);
   }
