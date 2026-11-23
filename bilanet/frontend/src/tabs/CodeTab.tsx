@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api, CODE_LANGUAGES } from "../api";
 import { useI18n } from "../i18n";
 import type { StringKey } from "../i18n/en";
-import { Output } from "../Answer";
+import { CodeBlock, Output } from "../Answer";
 
 export type CodeMode = "generate" | "explain" | "debug" | "optimize" | "translate";
 
@@ -25,6 +25,9 @@ export function CodeTab({ mode, disabled, code, setCode }: { mode: CodeMode; dis
   const [out, setOut] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // Debug (Python): run the code so the AI explains the real error instead of guessing.
+  const [runCode, setRunCode] = useState(true);
+  const [ran, setRan] = useState<{ error: string | null; output: string } | null>(null);
   const m = MODES[mode];
   const ready = mode === "generate" ? description.trim() : code.trim();
 
@@ -32,9 +35,10 @@ export function CodeTab({ mode, disabled, code, setCode }: { mode: CodeMode; dis
     setLoading(true); setError("");
     const res = await api(m.path, {
       code, language: lang, description, target_language: target,
-      error: errorMsg || null, reply_language: replyLanguage,
+      error: errorMsg || null, reply_language: replyLanguage, run_code: runCode,
     });
     setLoading(false);
+    if (mode === "debug") setRan(res.ok ? res.data.run ?? null : null);
     if (res.ok) setOut({ ...out, [mode]: res.data[m.field] });
     else setError(res.error);
   }
@@ -59,10 +63,21 @@ export function CodeTab({ mode, disabled, code, setCode }: { mode: CodeMode; dis
       {mode === "debug" && (
         <textarea className="code" dir="ltr" spellCheck={false} value={errorMsg} onChange={e => setErrorMsg(e.target.value)} rows={2} placeholder={t("errorPlaceholder")} />
       )}
+      {mode === "debug" && lang === "python" && (
+        <label className="check">
+          <input type="checkbox" checked={runCode} onChange={e => setRunCode(e.target.checked)} />
+          {t("runCode")}
+        </label>
+      )}
       <div className="row">
         <button className="primary" onClick={run} disabled={disabled || loading || !ready}>{t(m.button)}</button>
-        <button onClick={() => { setCode(""); setDescription(""); setErrorMsg(""); setOut({ ...out, [mode]: "" }); setError(""); }}>{t("clear")}</button>
+        <button onClick={() => { setCode(""); setDescription(""); setErrorMsg(""); setOut({ ...out, [mode]: "" }); setError(""); if (mode === "debug") setRan(null); }}>{t("clear")}</button>
       </div>
+      {mode === "debug" && ran && !loading && (
+        ran.error
+          ? <CodeBlock title={t("realError")} code={ran.error} />
+          : <CodeBlock title={t("ranOk")} code={ran.output.trim() || "—"} />
+      )}
       <Output loading={loading} text={out[mode] ?? ""} error={error} />
     </section>
   );

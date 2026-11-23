@@ -23,6 +23,8 @@ class CodeRequest(BaseModel):
     target_language: Optional[str] = None
     error: Optional[str] = Field(None, max_length=MAX_TEXT)  # debugging: the error message, if any
     reply_language: str = "en"
+    # Debugging Python: run the code (5 s limit) so the AI gets the real error instead of guessing.
+    run_code: bool = True
 
 
 class ConversationCreate(BaseModel):

@@ -36,5 +36,10 @@ export function Output({ loading, text, error }: { loading: boolean; text: strin
   if (loading) return <div className="output muted" aria-live="polite">{t(IS_DESKTOP ? "thinkingFirst" : "thinking")}</div>;
   if (error) return <div className="output error" role="alert">{error}</div>;
   if (!text) return null;
-  return <div className="output"><Answer text={text} /></div>;
+  return (
+    <div className="output">
+      <Answer text={text} />
+      <p className="muted small ai-note">{t("aiCanBeWrong")}</p>
+    </div>
+  );
 }

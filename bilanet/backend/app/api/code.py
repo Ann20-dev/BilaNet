@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.schemas.models import CodeRequest
 from app.inference.provider import get_provider
-from app import prompts
+from app import coderun, prompts
 
 router = APIRouter()
 
@@ -31,7 +31,10 @@ def exp(req: CodeRequest):
 @router.post("/code/debug")
 def dbg(req: CodeRequest):
     need_code(req)
-    return {"debug": run(prompts.debug(req.code, req.language, req.error), req)}
+    ran = None
+    if req.language == "python" and req.run_code and not (req.error or "").strip():
+        ran = coderun.run(req.code)
+    return {"debug": run(prompts.debug(req.code, req.language, req.error, ran), req), "run": ran}
 
 
 @router.post("/code/optimize")

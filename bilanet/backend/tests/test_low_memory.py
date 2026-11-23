@@ -118,3 +118,49 @@ def test_reply_language_reminder_goes_at_the_end():
     assert prompts.with_reply_language("Q", "fr") == "Q\n\nRéponds en français."
     assert prompts.with_reply_language("Q", "sw").endswith("Answer in Swahili (Kiswahili).")
     assert prompts.with_reply_language("Q", "xx") == "Q"  # unknown code: leave the question alone
+
+
+def test_coderun_reports_syntax_error_without_running():
+    from app import coderun
+    r = coderun.run("def greet(name)\n    print('hi')\n")
+    assert "SyntaxError" in r["error"] and "line 1" in r["error"]
+
+
+def test_coderun_reports_real_runtime_error():
+    from app import coderun
+    r = coderun.run("def average(xs):\n    return sum(xs) / len(xs)\n\nprint(average([]))\n")
+    assert "ZeroDivisionError" in r["error"]
+    assert 'File "main.py", line 2' in r["error"]
+    assert "coderun" not in r["error"]  # only the student's own lines are shown
+
+
+def test_coderun_success_output_and_no_input():
+    from app import coderun
+    r = coderun.run("print('ok')\n")
+    assert r["error"] is None and r["output"].strip() == "ok"
+    r = coderun.run("x = input()\n")  # no keyboard: fails fast instead of hanging
+    assert "EOFError" in r["error"]
+
+
+def test_coderun_stops_endless_loop(monkeypatch):
+    from app import coderun
+    monkeypatch.setattr(coderun, "TIMEOUT", 1)
+    r = coderun.run("while True:\n    pass\n")
+    assert r["timed_out"] and "stopped" in r["error"]
+
+
+def test_coderun_does_not_pass_secrets(monkeypatch):
+    from app import coderun
+    monkeypatch.setenv("AI_API_KEY", "secret-value")
+    r = coderun.run("import os\nprint(os.environ.get('AI_API_KEY'))\n")
+    assert r["output"].strip() == "None"
+
+
+def test_debug_endpoint_runs_python_and_returns_real_error(monkeypatch):
+    monkeypatch.setenv("AI_PROVIDER", "mock")
+    get_provider.cache_clear()
+    r = client.post("/api/v1/code/debug", json={"code": "print(1/0)\n", "language": "python"}).json()
+    assert "ZeroDivisionError" in r["run"]["error"]
+    r = client.post("/api/v1/code/debug", json={"code": "print(1/0)\n", "language": "python", "run_code": False}).json()
+    assert r["run"] is None
+    get_provider.cache_clear()

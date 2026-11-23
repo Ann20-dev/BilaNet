@@ -9,6 +9,10 @@ export const en = {
   experimentalTag: "experimental",
   experimentalReply: "Answers in {lang} are experimental. The offline AI does not know this language well yet, so explanations may be wrong or make no sense. For important questions, switch the AI language to English or French.",
   draftNote: "This translation is a draft. Help us improve it.",
+  aiCanBeWrong: "AI answers can be wrong. Run the code to check.",
+  runCode: "Run my code to find the real error (Python only, stops after 5 seconds)",
+  realError: "Python's real error when BilaNet ran your code",
+  ranOk: "Your code ran without errors. It printed:",
 
   statusReady: "Ready",
   statusStarting: "Starting…",

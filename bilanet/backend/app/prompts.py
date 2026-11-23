@@ -108,12 +108,24 @@ def explain(code: str, language: str) -> str:
     )
 
 
-def debug(code: str, language: str, error: str | None) -> str:
+def debug(code: str, language: str, error: str | None, ran: dict | None = None) -> str:
     err = f"\n\nThe error message is:\n```\n{error}\n```" if error else ""
+    if ran is not None:
+        # The real result of running the code: the model explains this instead of guessing.
+        if ran.get("error"):
+            err += f"\n\nWhen this code was run, Python reported this error:\n```\n{ran['error']}\n```\nExplain this error first."
+        else:
+            out = (ran.get("output") or "").strip()[:500] or "(nothing)"
+            err += (f"\n\nThis code was run and finished WITHOUT any error. It printed:\n```\n{out}\n```\n"
+                    "So there is no crash. Only report a logic problem if the output is clearly wrong; otherwise say the code works.")
     return (
-        f"Find the bugs in this {lang_name(language)} code (syntax errors and logic errors).{err}\n\n"
+        f"Find the real bugs in this {lang_name(language)} code.{err}\n\n"
         f"```\n{code}\n```\n\n"
-        "Answer with: 1) a numbered list of each problem and why it is wrong, "
+        # Small models invent problems when asked for "syntax errors and logic errors";
+        # tell it plainly to report only what is really wrong.
+        "Only report problems that really exist in this code. Do not invent syntax errors: "
+        "if the syntax is correct, do not mention syntax. "
+        "Answer with: 1) a numbered list of each real problem and why it is wrong, "
         "2) the full corrected code."
     )
 

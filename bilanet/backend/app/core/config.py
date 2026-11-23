@@ -15,6 +15,10 @@ class Settings:
     # Free the model's RAM after this many idle seconds (0 = keep it loaded).
     idle_unload: int = int(os.getenv("IDLE_UNLOAD_SECONDS", "300"))
     max_tokens: int = int(os.getenv("MAX_TOKENS", "1024"))
+    # Sampling. llama.cpp defaults to temperature 0.8 and no repeat penalty, which made the
+    # small model invent bugs and loop. A tutor should pick its most likely answer.
+    temperature: float = float(os.getenv("TEMPERATURE", "0.2"))
+    repeat_penalty: float = float(os.getenv("REPEAT_PENALTY", "1.15"))
     docs_dir: str = os.getenv("DOCS_DIR", "./docs")
     # The user's own indexed notes/code for offline docs search (built-in docs ship with the app).
     docs_user_db: str = os.getenv("DOCS_USER_DB", "bilanet_docs.db")

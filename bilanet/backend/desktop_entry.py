@@ -3,6 +3,9 @@
 The desktop app starts this process with AI_PROVIDER, MODELS_DIR, DB_URL and PORT set,
 plus BILANET_PARENT_PID (its own process id). When that process goes away (the app quits
 or crashes), this server exits too, so no orphaned background process is left running.
+
+Started as `bilanet-backend --bilanet-run-python <file>` it instead runs a student's
+Python file for the Debug tab and exits (see app/coderun.py).
 """
 import os
 import threading
@@ -34,6 +37,13 @@ def _exit_when_parent_exits(pid):
 
 
 if __name__ == "__main__":
+    import sys
+    # The Debug tab runs a student's Python code with this same program (there is no
+    # separate Python in the desktop app). See app/coderun.py.
+    if len(sys.argv) == 3 and sys.argv[1] == "--bilanet-run-python":
+        from app.coderun import child_main
+        child_main(sys.argv[2])
+        sys.exit(0)
     import multiprocessing
     multiprocessing.freeze_support()
     parent = os.getenv("BILANET_PARENT_PID")

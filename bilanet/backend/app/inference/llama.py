@@ -12,11 +12,13 @@ class LlamaProvider:
     student's other apps (browser, editor). The next request reloads it (a few seconds).
     """
 
-    def __init__(self, path, context_size=4096, threads=4, max_tokens=1024, idle_unload=300):
+    def __init__(self, path, context_size=4096, threads=4, max_tokens=1024, idle_unload=300,
+                 temperature=0.2, repeat_penalty=1.15):
         # `path` may be a function, so a model downloaded after startup is picked up without a restart.
         self._path = path
         self.context_size = context_size; self.threads = threads; self.max_tokens = max_tokens
         self.idle_unload = idle_unload
+        self.sampling = {"temperature": temperature, "repeat_penalty": repeat_penalty}
         self.llm = None
         self.last_used = time.monotonic()
         # llama.cpp is not thread-safe and FastAPI runs requests in parallel threads.
@@ -85,7 +87,7 @@ class LlamaProvider:
         with self.lock:
             if self.llm is None: self.load()
             try:
-                out = self.llm(self._prompt(prompt, system), max_tokens=max_tokens or self.max_tokens, stop=['<|im_end|>'])
+                out = self.llm(self._prompt(prompt, system), max_tokens=max_tokens or self.max_tokens, stop=['<|im_end|>'], **self.sampling)
             except ValueError as e:
                 # llama.cpp raises ValueError when the prompt does not fit in the context window.
                 from fastapi import HTTPException
@@ -98,7 +100,7 @@ class LlamaProvider:
         with self.lock:
             if self.llm is None: self.load()
             try:
-                for chunk in self.llm(self._prompt(prompt, system), max_tokens=max_tokens or self.max_tokens, stream=True, stop=['<|im_end|>']):
+                for chunk in self.llm(self._prompt(prompt, system), max_tokens=max_tokens or self.max_tokens, stream=True, stop=['<|im_end|>'], **self.sampling):
                     yield chunk["choices"][0]["text"]
             finally:
                 self.last_used = time.monotonic()
