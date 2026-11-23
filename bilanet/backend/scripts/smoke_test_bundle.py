@@ -64,14 +64,20 @@ try:
     with urllib.request.urlopen(base + "/quiz/questions?count=3", timeout=10) as r:
         assert len(json.loads(r.read())) == 3
     print("quiz ok", flush=True)
-    # The Debug tab runs Python code with the bundled program itself (--bilanet-run-python).
-    if model:
-        out = call("/code/debug", {"code": "def average(xs):\n    return sum(xs) / len(xs)\n\nprint(average([]))\n",
-                                   "language": "python"})
-        assert out["run"] and "ZeroDivisionError" in (out["run"]["error"] or ""), out.get("run")
-        ok = call("/code/debug", {"code": "print('hello from bundle')\n", "language": "python"})["run"]
-        assert ok["error"] is None and ok["output"].strip() == "hello from bundle", ok
-        print("bundled code runner ok:", out["run"]["error"].splitlines()[-1], flush=True)
+    # The Debug tab runs Python code with the bundled program itself (--bilanet-run-python),
+    # exactly as app/coderun.py starts it. Tested directly: the /code/debug prompt is too long
+    # for the tiny test model's 512-token context.
+    def run_with_bundle(src):
+        path = os.path.join(data, "student.py")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(src)
+        return subprocess.run([exe, "--bilanet-run-python", path], cwd=data, capture_output=True,
+                              stdin=subprocess.DEVNULL, timeout=120, text=True)
+    bad = run_with_bundle("def average(xs):\n    return sum(xs) / len(xs)\n\nprint(average([]))\n")
+    assert bad.returncode != 0 and "ZeroDivisionError" in bad.stderr and 'line 2' in bad.stderr, (bad.returncode, bad.stderr)
+    good = run_with_bundle("print('hello from bundle')\n")
+    assert good.returncode == 0 and good.stdout.strip() == "hello from bundle", (good.returncode, good.stdout, good.stderr)
+    print("bundled code runner ok:", bad.stderr.strip().splitlines()[-1], flush=True)
     if model:
         t = time.time()
         out = call("/chat", {"message": "Once upon a time"})

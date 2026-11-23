@@ -86,7 +86,7 @@ def child_main(path):
         pass
     except BaseException as e:  # noqa: BLE001 - we report whatever the student's code raised
         frames = [fr for fr in traceback.extract_tb(e.__traceback__) if fr.filename == FILE]
-        lines = ["Traceback (most recent call last):"] + traceback.format_list(frames)
+        lines = ["Traceback (most recent call last):\n"] + traceback.format_list(frames)
         lines += traceback.format_exception_only(type(e), e)
         sys.stderr.write("".join(lines))
         sys.stderr.flush()
