@@ -27,7 +27,8 @@ function initialLocale(): string {
 
 // The language the AI answers in when the user has not picked one: the UI language if the
 // model writes it reliably, otherwise French where it is widely read, otherwise English.
-const FRENCH_FIRST = ["wo", "ln", "mg"];
+// Arabic: North and West African Arabic speakers commonly read French too.
+const FRENCH_FIRST = ["ar", "wo", "ln", "mg"];
 function defaultReply(ui: string): string {
   if (STABLE_REPLY_LANGUAGES.includes(ui)) return ui;
   return FRENCH_FIRST.includes(ui) ? "fr" : "en";

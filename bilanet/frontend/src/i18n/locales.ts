@@ -11,10 +11,11 @@ export type Locale = {
   strings: Partial<Strings>;
 };
 
-// Answer languages the offline model writes reliably. Tested Nov 2026 with Qwen2.5-Coder 3B:
-// French was correct; Swahili and Hausa came out as fluent-looking nonsense. Every other
-// language is marked "experimental" in the AI-language menu until a better model is in place.
-export const STABLE_REPLY_LANGUAGES = ["en", "fr", "pt", "ar"];
+// Answer languages the offline model writes reliably. Tested Nov 2026: French and Portuguese
+// were correct with both models; Swahili and Hausa came out as fluent-looking nonsense, and
+// the Light (1.5B) model's Arabic was often wrong (mixed-in Chinese, off-topic answers). Every
+// other language is marked "experimental" in the AI-language menu until a better model is in place.
+export const STABLE_REPLY_LANGUAGES = ["en", "fr", "pt"];
 
 export const LOCALES: Locale[] = [
   { code: "en", name: "English", english: "English", reviewed: true, strings: {} },
@@ -301,7 +302,7 @@ export const LOCALES: Locale[] = [
 
   { code: "ar", name: "العربية", english: "Arabic", dir: "rtl", reviewed: false, strings: {
     tagline: "مساعد برمجة يعمل دون إنترنت", uiLanguage: "اللغة", replyLanguage: "لغة إجابات الذكاء الاصطناعي",
-    replyHint: "يجيب الذكاء الاصطناعي المحلي جيدًا بالإنجليزية والفرنسية والبرتغالية والعربية. اللغات الأفريقية تجريبية: قد تكون الإجابات خاطئة أو صعبة الفهم. أما الشيفرة فتبقى كما هي.", experimentalTag: "تجريبية", experimentalReply: "الإجابات بلغة {lang} تجريبية. لا يعرف الذكاء الاصطناعي المحلي هذه اللغة جيدًا بعد، لذا قد تكون الشروح خاطئة أو غير مفهومة. للأسئلة المهمة، اختر الإنجليزية أو الفرنسية لغةً للإجابات.",
+    replyHint: "يجيب الذكاء الاصطناعي المحلي جيدًا بالإنجليزية والفرنسية والبرتغالية. العربية واللغات الأفريقية تجريبية: قد تكون الإجابات خاطئة أو صعبة الفهم. أما الشيفرة فتبقى كما هي.", experimentalTag: "تجريبية", experimentalReply: "الإجابات بلغة {lang} تجريبية. لا يعرف الذكاء الاصطناعي المحلي هذه اللغة جيدًا بعد، لذا قد تكون الشروح خاطئة أو غير مفهومة. للأسئلة المهمة، اختر الإنجليزية أو الفرنسية لغةً للإجابات.",
     draftNote: "هذه الترجمة مسودة. ساعدنا في تحسينها.",
     statusReady: "جاهز", statusStarting: "جارٍ التشغيل…", statusWaking: "جارٍ إيقاظ الخادم…", statusOffline: "تعذّر الوصول إلى المساعد", statusFailed: "تعذّر التشغيل",
     tabChat: "محادثة", tabGenerate: "إنشاء", tabExplain: "شرح", tabDebug: "تصحيح الأخطاء", tabOptimize: "تحسين", tabTranslate: "ترجمة الشيفرة", tabDocs: "التوثيق", tabQuiz: "اختبار", tabProject: "مشروع",
@@ -316,7 +317,7 @@ export const LOCALES: Locale[] = [
 
   { code: "fr", name: "Français", english: "French", reviewed: false, strings: {
     tagline: "Assistant de programmation hors ligne", uiLanguage: "Langue", replyLanguage: "L'IA répond en",
-    replyHint: "L'IA hors ligne répond bien en anglais, français, portugais et arabe. Les langues africaines sont expérimentales : les réponses peuvent être fausses ou difficiles à lire. Le code reste le même.", experimentalTag: "expérimental", experimentalReply: "Les réponses en {lang} sont expérimentales. L'IA hors ligne ne connaît pas encore bien cette langue : les explications peuvent être fausses ou incompréhensibles. Pour les questions importantes, choisissez l'anglais ou le français.",
+    replyHint: "L'IA hors ligne répond bien en anglais, français et portugais. L'arabe et les langues africaines sont expérimentaux : les réponses peuvent être fausses ou difficiles à lire. Le code reste le même.", experimentalTag: "expérimental", experimentalReply: "Les réponses en {lang} sont expérimentales. L'IA hors ligne ne connaît pas encore bien cette langue : les explications peuvent être fausses ou incompréhensibles. Pour les questions importantes, choisissez l'anglais ou le français.",
     draftNote: "Cette traduction est un brouillon. Aidez-nous à l'améliorer.",
     statusReady: "Prêt", statusStarting: "Démarrage…", statusWaking: "Réveil du serveur…", statusOffline: "Impossible de joindre l'assistant", statusFailed: "Échec du démarrage",
     tabChat: "Discussion", tabGenerate: "Générer", tabExplain: "Expliquer", tabDebug: "Déboguer", tabOptimize: "Optimiser", tabTranslate: "Traduire le code", tabDocs: "Documentation", tabQuiz: "Quiz", tabProject: "Projet",
@@ -331,7 +332,7 @@ export const LOCALES: Locale[] = [
 
   { code: "pt", name: "Português", english: "Portuguese", reviewed: false, strings: {
     tagline: "Assistente de programação offline", uiLanguage: "Idioma", replyLanguage: "A IA responde em",
-    replyHint: "A IA offline responde bem em inglês, francês, português e árabe. As línguas africanas são experimentais: as respostas podem estar erradas ou ser difíceis de ler. O código é sempre o mesmo.", experimentalTag: "experimental", experimentalReply: "As respostas em {lang} são experimentais. A IA offline ainda não conhece bem esta língua, por isso as explicações podem estar erradas ou não fazer sentido. Para perguntas importantes, escolha inglês ou francês.",
+    replyHint: "A IA offline responde bem em inglês, francês e português. O árabe e as línguas africanas são experimentais: as respostas podem estar erradas ou ser difíceis de ler. O código é sempre o mesmo.", experimentalTag: "experimental", experimentalReply: "As respostas em {lang} são experimentais. A IA offline ainda não conhece bem esta língua, por isso as explicações podem estar erradas ou não fazer sentido. Para perguntas importantes, escolha inglês ou francês.",
     draftNote: "Esta tradução é um rascunho. Ajude-nos a melhorá-la.",
     statusReady: "Pronto", statusStarting: "A iniciar…", statusWaking: "A acordar o servidor…", statusOffline: "Não é possível contactar o assistente", statusFailed: "Falha ao iniciar",
     tabChat: "Conversa", tabGenerate: "Gerar", tabExplain: "Explicar", tabDebug: "Depurar", tabOptimize: "Otimizar", tabTranslate: "Traduzir código", tabDocs: "Documentação", tabQuiz: "Quiz", tabProject: "Projeto",

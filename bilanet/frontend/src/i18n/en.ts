@@ -5,7 +5,7 @@ export const en = {
   tagline: "Offline coding assistant",
   uiLanguage: "Language",
   replyLanguage: "AI answers in",
-  replyHint: "The offline AI answers well in English, French, Portuguese and Arabic. African languages are experimental: answers may be wrong or hard to read. Code is always the same.",
+  replyHint: "The offline AI answers well in English, French and Portuguese. Arabic and African languages are experimental: answers may be wrong or hard to read. Code is always the same.",
   experimentalTag: "experimental",
   experimentalReply: "Answers in {lang} are experimental. The offline AI does not know this language well yet, so explanations may be wrong or make no sense. For important questions, switch the AI language to English or French.",
   draftNote: "This translation is a draft. Help us improve it.",

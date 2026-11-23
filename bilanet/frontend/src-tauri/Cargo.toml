@@ -1,6 +1,6 @@
 [package]
 name = "bilanet"
-version = "0.1.1"
+version = "0.1.2"
 description = "BilaNet: offline AI coding assistant"
 edition = "2021"
 
